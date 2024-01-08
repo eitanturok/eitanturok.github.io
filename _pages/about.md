@@ -24,8 +24,8 @@ better data.
 My research interests are in **efficient and geometric deep learning**,
 **representation learning**, and **making GPUs go brrr**. I used to do research in CS theory on fine-grained complexity and differential privacy.
 
-I graduated from [Columbia University](https://www.columbia.edu/) with a **B.S.
-in Computer Science and Applied Mathematics** in 2023.
+I graduated from [Columbia University](https://www.columbia.edu/) in 2023 with a
+**B.S. in Computer Science and Applied Mathematics**.
 
 At Columbia, I did research with [Professor Itsik
 Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe
