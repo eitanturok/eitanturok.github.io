@@ -1,15 +1,28 @@
 ---
 ---
 
+@article{chlenski2023fast,
+  selected={true},
+  title={Fast hyperboloid decision tree algorithms},
+  author={Chlenski, Philippe and Turok, Ethan and Moretti, Antonio and Pe'er, Itsik},
+  abstract={Hyperbolic geometry is gaining traction in machine learning for its effectiveness at capturing hierarchical structures in real-world data. Hyperbolic spaces, where neighborhoods grow exponentially, offer substantial advantages and consistently deliver state-of-the-art results across diverse applications. However, hyperbolic classifiers often grapple with computational challenges. Methods reliant on Riemannian optimization frequently exhibit sluggishness, stemming from the increased computational demands of operations on Riemannian manifolds. In response to these challenges, we present hyperDT, a novel extension of decision tree algorithms into hyperbolic space. Crucially, hyperDT eliminates the need for computationally intensive Riemannian optimization, numerically unstable exponential and logarithmic maps, or pairwise comparisons between points by leveraging inner products to adapt Euclidean decision tree algorithms to hyperbolic space. Our approach is conceptually straightforward and maintains constant-time decision complexity while mitigating the scalability issues inherent in high-dimensional Euclidean spaces. Building upon hyperDT we introduce hyperRF, a hyperbolic random forest model. Extensive benchmarking across diverse datasets underscores the superior performance of these models, providing a swift, precise, accurate, and user-friendly toolkit for hyperbolic data analysis.},
+  year={2023},
+  journal={International Conference on Learning Representations},
+  arxiv={2310.13841},
+  bibtex_show={true},
+  preview={fast_hyperboloid_decision_tree_algorithms.png},
+  reviews={https://openreview.net/forum?id=TTonmgTT9X},
+}
+
 @article{alman2023tensors,
+  selected={true},
   title={Tensors Ranks and the Fine-Grained Complexity of Dynamic Programming},
   author={Alman, Josh and Turok, Ethan and Yu, Hantao and Zhang, Hengzhi},
-  year={2024},
+  year={2023},
   abstract={Generalizing work of Künnemann, Paturi, and Schneider [ICALP 2017], we study a wide class of high-dimensional dynamic programming (DP) problems in which one must find the shortest path between two points in a high-dimensional grid given a tensor of transition costs between nodes in the grid. This captures many classical problems which are solved using DP such as the knapsack problem, the airplane refueling problem, and the minimal-weight polygon triangulation problem. We observe that for many of these problems, the tensor naturally has low tensor rank or low slice rank. We then give new algorithms and a web of fine-grained reductions to tightly determine the complexity of these problems. For instance, we show that a polynomial speedup over the DP algorithm is possible when the tensor rank is a constant or the slice rank is 1, but that such a speedup is impossible if the tensor rank is slightly super-constant (assuming SETH) or the slice rank is at least 3 (assuming the APSP conjecture). We find that this characterizes the known complexities for many of these problems, and in some cases leads to new faster algorithms.},
   abbr={ITCS},
   journal={Innovations in Theoretical Computer Science},
   arxiv={2309.04683},
   bibtex_show={true},
   preview={tensor_ranks_and_the_fine_grained_complexity_of_dynamic_programming.png},
-  selected={true},
 }
