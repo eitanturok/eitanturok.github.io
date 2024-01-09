@@ -6,5 +6,5 @@ related_posts: false
 ---
 
 New paper accepted to ICLR '24: [Fast hyperboloid decision tree algorithms
-](https://arxiv.org/abs/2310.13841)! We develop the first efficient random
+](https://arxiv.org/abs/2310.13841)! We developed the first efficient random
 forest 🌲🌳 algorithm in hyperbolic space.
