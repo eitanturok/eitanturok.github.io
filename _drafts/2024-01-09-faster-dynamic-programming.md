@@ -22,9 +22,9 @@ On the other hand, there are some notable examples where a natural DP formulatio
 So, we wonder:
 > For which problems can we achieve a polynomial speedup over the standard DP algorithm? And when is the standard DP algorithm already optimal?
 
-In our [latest work](https://arxiv.org/abs/2309.04683), we provide an answer to this question for certain kinds of DP problems, specifically for $k$-dimensional Least Weighted Subsequence ($$k\text{D}\hspace{1mm}\text{LWS}$$) DP problems.
+In our [latest work](https://arxiv.org/abs/2309.04683), we provide an answer to this question for certain kinds of DP problems, specifically for $k$-dimensional Least Weighted Subsequence ($k\text{D}\hspace{1mm}\text{LWS}$) DP problems.
 
-We prove that achieving a polynomial speedup for $k\text{D}\hspace{1mm}\text{LWS}$ depends on the cost of transitioning from one DP state to another. This cost is expressed as a matrix in two dimensions or a tensor in higher dimensions. If this cost tensor has constant rank, then it *is possible* to achieve a polynomial speedup but if the rank is slightly greater than constant, a polynomial speedup *is impossible*.
+We prove that achieving a polynomial speedup for $k\text{D}\hspace{1mm}\text{LWS}$ depends on the cost of transitioning from one DP state to another. This cost is expressed as a matrix in two dimensions or, analogously, a tensor in higher dimensions. If this cost tensor has constant rank, then it *is possible* to achieve a polynomial speedup but if the rank is slightly greater than constant, a polynomial speedup *is impossible*.
 
 This is a beautiful result: if the cost tensor has a simple structure, i.e. constant rank, we can exploit it to solve the problem faster. But once the rank becomes slightly more complex, there is a naturally occurring barrier that makes it impossible to solve the problem any faster. This suggests there is some inherent difference between a constant and super-constant rank, a fundamental transition point where the computation goes from fast to slow.
 
@@ -35,7 +35,7 @@ This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how
 
 Let's dive in.
 
-# What is $$k\text{D}\hspace{1mm}\text{LWS}$$?
+# What is $k\text{D}\hspace{1mm}\text{LWS}$?
 
 ## Recurrence Relations
 
