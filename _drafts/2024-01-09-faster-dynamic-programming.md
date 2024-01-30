@@ -26,7 +26,7 @@ In our [latest work](https://arxiv.org/abs/2309.04683), we provide an answer to 
 
 We prove that achieving a polynomial speedup for $k\text{D}\hspace{1mm}\text{LWS}$ depends on the cost of transitioning from one DP state to another. This cost is expressed as a matrix in two dimensions or, analogously, a tensor in higher dimensions. If this cost tensor has constant rank, then it *is possible* to achieve a polynomial speedup but if the rank is slightly greater than constant, a polynomial speedup *is impossible*.
 
-This is a beautiful result: if the cost tensor has a simple structure, i.e. constant rank, we can exploit it to solve the problem faster. But once the rank becomes slightly more complex, there is a naturally occurring barrier that makes it impossible to solve the problem any faster. This suggests there is some inherent difference between a constant and super-constant rank, a fundamental transition point where the computation goes from fast to slow.
+This is a beautiful result: if the cost tensor has a simple structure, i.e. constant rank, we can exploit it to solve the problem faster. But once the cost tensor becomes slightly more complex, i.e. super-constant rank, there is a naturally occurring barrier that makes it impossible to solve the problem any faster. This suggests there is some inherent difference between a constant and super-constant rank, a fundamental transition point where the computation goes from fast to slow.
 
 Our main result is thus:
 > For $k\text{D}\hspace{1mm}\text{LWS}$ we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
@@ -37,18 +37,35 @@ Let's dive in.
 
 # What is $k\text{D}\hspace{1mm}\text{LWS}$?
 
-## Recurrence Relations
+When most students learn about DP they think it is all about filling in DP tables. This is not true! The most important part of DP is finding the recurrence relation -- a recursive equation that gives a solution for the problem in terms of simpler sub-problems. This is the heart of dynamic programming and thus a natural way to characterize different DP problems.
 
-When most students learn about DP they think it is all about filling in tables. This is not true! The most important part of DP is finding the recurrence relation -- a recursive equation that gives a solution for the problem in terms of simpler sub-problems. This is the heart of dynamic programming.
+$k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $k\text{D}\hspace{1mm}\text{LWS}$, we will analyze the recurrence relations of three different DP problems and create a general recurrence relation that captures all of these problems -- this is the $k\text{D}\hspace{1mm}\text{LWS}$ recurrence relation!
 
-As a warmup, let's find the recurrence relations for two DP problems. First, the longest increasing subsequence ($\text{LIS}$) problem:
+## Longest Increasing Subsequence
+
+To begin let's find the recurrence relations for the longest increasing subsequence ($\text{LIS}$) problem:
 
 > Given an integer array $x_1, \dots, x_n$,
 > return the length of the longest strictly increasing subsequence in this array.
 
 If our array is $[10,9,2,5,3,7,101,18]$, our $\text{LIS}$ is $[2,3,7,101]$. So we'd return $4$.
 
-Suppose we wish to compute $dp[j]$, the $\text{LIS}$ of $x_1, \dots, x_j$. Intuitively, we can take a look at the LIS of a smaller sequence, $dp[i]$ where $i < j$. If $x_j > x_i$, then we can add $x_j$ to the subsequence that ends at $x_i$.
+The recurrence relation for this problem is
+$$
+dp[j]
+    =
+    \begin{cases}
+        0 & \text{if $j == 0$} \\\\
+        \max_{0 \leq i < j} dp[i] + \mathbb{1}[x_j > x_i] & \text{otherwise.} \\
+    \end{cases}
+$$
+Here, $dp[j]$ is the $\text{LIS}$ of $x_1, \dots, x_j$ and  $\mathbb{1}[x_j > x_i]$ is an indicator variable that returns one when $x_j > x_i$ and zero otherwise. This recurrence relation shows that we can use the already-computed LIS of a shorter sequence, $dp[i]$, to compute the LIS of our sequence, $dp[j]$.
+
+Intuitively, to compute the LIS of $x_1, \dots, x_j$ we take a look at the LIS of all shorter sequences $x_1, \dots, x_i$ where $i < j$ and if the last term of this shorter sequence, $x_i$, is greater than $x_j$.
+
+if $x_j > x_i$, then we can add $x_j$ to the subsequence that ends at $x_i$, thus increasing the length of $dp[i]$ by one. This occurs when $\mathbb{1}[x_j > x_i]$ evaluates to one. But
+
+
 $dp[j]$ is the maximum over all previous
 
 Let's look at a previous sequence, $dp[i]$ where $i < j$.
