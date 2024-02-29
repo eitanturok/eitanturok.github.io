@@ -24,14 +24,13 @@ So, we wonder:
 
 In our [latest work](https://arxiv.org/abs/2309.04683), we provide an answer to this question for certain kinds of DP problems, specifically for $k$-dimensional Least Weighted Subsequence ($k\text{D}\hspace{1mm}\text{LWS}$) DP problems.
 
-We prove that achieving a polynomial speedup for $k\text{D}\hspace{1mm}\text{LWS}$ depends on the cost of transitioning from one
-DP state to another. This cost is expressed as a matrix in two dimensions or, analogously, a tensor in higher dimensions. If this cost tensor has constant rank, then it *is possible* to achieve a polynomial speedup but if the rank is slightly greater than constant, a polynomial speedup *is impossible* (assuming $\text{SETH}$).
+We prove that achieving a polynomial speedup for $k\text{D}\hspace{1mm}\text{LWS}$ depends on the cost of transitioning from one DP state to another. This cost is expressed as a matrix in two dimensions or, analogously, a tensor in higher dimensions. If this cost tensor has constant rank, then it *is possible* to achieve a polynomial speedup. But if the rank is slightly greater than constant, a polynomial speedup *is impossible* (assuming $\text{SETH}$).
 
 This is a beautiful result: if the cost tensor has a simple structure, i.e. constant rank, we can exploit it to solve the problem faster. But once the cost tensor becomes slightly more complex, i.e. super-constant rank, there is a naturally occurring barrier that makes it impossible to solve the problem any faster. This suggests there is some inherent difference between a constant and super-constant rank, a fundamental transition point where the computation goes from fast to slow.
 
 Informally, our main result is thus:
 
-> For $k\text{D}\hspace{1mm}\text{LWS}$ we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
+> For $k\text{D}\hspace{1mm}\text{LWS}$ problems we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
 
 This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how we proved these results, and the problems that we can now solve faster.
 
@@ -62,15 +61,15 @@ dp[j]
     \end{cases}
 $$
 
-Let $dp[j]$ be the $\text{LIS}$ of $x_1, \dots, x_j$ and $\mathbb{1}[x_j > x_i]$ be an indicator variable that returns one when $x_j > x_i$ and zero otherwise. This recurrence relation shows that we can use $dp[i]$, the already-computed $\text{LIS}$ values of a shorter sequence $x_1, \dots, x_i$, to compute $dp[j]$, the $\text{LIS}$ of our longer sequence $x_1, \dots, x_j$. Now we have two cases.
+where $dp[j]$ is the $\text{LIS}$ of $x_1, \dots, x_j$ and $\mathbb{1}[x_j > x_i]$ is an indicator variable that returns one when $x_j > x_i$ and zero otherwise. Now let's break down the two cases.
 
 **Base Case $j == 0$:**
 
-Here, we return zero because $dp[0]$ is undefined; we are at $x_0$ and have gone past $x_1$, the first value in the sequence. So there is no $\text{LIS}$ and the length of the $\text{LIS}$ must be zero.
+In the base case, we return zero when $j == 0$ because we are at $x_0$ and have gone past $x_1$, the first value in the sequence. So $dp[0]$ is undefined and the $\text{LIS}$ must have a length of zero.
 
 **Otherwise:**
 
-Here $j > 0$, meaning we have one or more elements in our sequence $x_1, \dots, x_j$ for which we are computing the $\text{LIS}$. To compute the $\text{LIS}$ of this sequence, we can take a look at the $\text{LIS}$ of all shorter sequences $x_1, \dots, x_i$ ($dp[i]$) where $i < j$. We will split this into two parts:
+Here $j > 0$, meaning we have one or more elements in our sequence $x_1, \dots, x_j$ for which we are computing the $\text{LIS}$. In this case, we use $dp[i]$, the already-computed $\text{LIS}$ values of a shorter sequence $x_1, \dots, x_i$, to compute $dp[j]$, the $\text{LIS}$ of our longer sequence $x_1, \dots, x_j$. We compare the last element of the shorter sequence, $x_i$, to the last element of our longer sequence, $x_j$:
 * If $x_j > x_i$, we can add $x_j$ to the $\text{LIS}$ ending at $x_i$, $dp[i]$. Because $x_j$ is greater than $x_i$, the sequence will still be strictly increasing. This will increase the length of the sequence by one, so $dp[j] = dp[i] + 1$.
 * If $x_j \leq x_i$, we cannot add $x_j$ to the $\text{LIS}$ ending at $x_i$. So we can just have the $\text{LIS}$ of $x_1, \dots, x_j$ not include $x_j$ and instead be the longest increasing subsequence of $x_i$, $dp[i]$. So we write, $dp[j] = dp[i] + 0$.
 
