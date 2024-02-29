@@ -82,7 +82,7 @@ Here $j > 0$, meaning we have one or more elements in our sequence $x_1, \dots, 
 These two cases are succinctly captured by the expression $\mathbb{1}[x_j > x_i]$.
 
 
-Now that we have an intuitive understanding of the recurrence relation, we can write the recurrence relation in a slightly different form. (We'll see why we need this later.)
+Now we will write the recurrence relation in a slightly different form (we'll see why we need this later). Let
 
 $$
 dp[j]
@@ -115,6 +115,7 @@ w[i, j]
     \end{cases}
 $$
 
+and where solution to $\text{LIS}$ is given by $-dp[j]$. While $\text{LIS}$ is a maximization problem, this is a minimization problem and so we include a $-1$ instead of a $+1$ in $w$.
 
 
 ## Airplane Refueling Problem
