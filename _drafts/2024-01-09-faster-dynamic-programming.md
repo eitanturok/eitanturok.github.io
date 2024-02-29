@@ -42,7 +42,7 @@ When most students learn about DP they think it is all about filling in DP table
 
 $k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $k\text{D}\hspace{1mm}\text{LWS}$, we will analyze the recurrence relations of three different DP problems and create a general recurrence relation that captures all of these problems -- this is the $k\text{D}\hspace{1mm}\text{LWS}$ recurrence relation!
 
-## Longest Increasing Subsequence
+## Longest Increasing Subsequence Problem
 
 To begin, let's find the recurrence relations for the longest increasing subsequence ($\text{LIS}$) problem: 
 
@@ -56,12 +56,18 @@ $$
 dp[j]
     =
     \begin{cases}
-        0 & \text{if $j == 0$} \\\\
-        \max_{0 \leq i < j} dp[i] + \mathbb{1}[x_j > x_i] & \text{otherwise.} \\
+        0
+        &
+        \text{if $j == 0$}
+        \\
+        \max_{0 \leq i < j} dp[i] + \mathbb{1}[x_j > x_i]
+        &
+        \text{otherwise.}
+        \\
     \end{cases}
 $$
 
-where $dp[j]$ is the $\text{LIS}$ of $x_1, \dots, x_j$ and $\mathbb{1}[x_j > x_i]$ is an indicator variable that returns one when $x_j > x_i$ and zero otherwise. Now let's break down the two cases.
+where $dp[j]$ is the $\text{LIS}$ of $x_1, \dots, x_j$ and $\mathbb{1}[x_j > x_i]$ is an indicator variable that returns one when $x_j > x_i$ and zero otherwise. The solution to the $\text{LIS}$ problem is given by $dp[n]$. Now let's break down the two cases.
 
 **Base Case $j == 0$:**
 
@@ -76,5 +82,41 @@ Here $j > 0$, meaning we have one or more elements in our sequence $x_1, \dots, 
 These two cases are succinctly captured by the expression $\mathbb{1}[x_j > x_i]$.
 
 
+Now that we have an intuitive understanding of the recurrence relation, we can write the recurrence relation in a slightly different form. (We'll see why we need this later.)
+
+$$
+dp[j]
+    =
+    \begin{cases}
+        0
+        &
+        \text{if $j == 0$} \\
+        \min_{0 \leq i < j} dp[i] + w[i, j]
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+where $w[i, j]$ is an $(n + 1) \times (n + 1)$ matrix defined as
+
+$$
+w[i, j]
+    =
+    \begin{cases}
+        -1 
+        &
+        \text{if $x_j > x_i$}
+        \\
+        0
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+
+
+## Airplane Refueling Problem
 
 We prove that for $k\text{D}\hspace{1mm}\text{LWS}$ problems a polynomial speedup is possible whenever the cost to transition from one DP state to another is constant. The moment the cost to go from one DP state to another becomes slightly super-constant, it is impossible to achieve a polynomial speedup.
