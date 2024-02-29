@@ -15,9 +15,9 @@ toc:
 
 Dynamic programming (DP) is one of the most common algorithmic paradigms, used everywhere from DNA sequencing and financial modeling to matrix multiplication and shortest path algorithms. When one solves a problem using DP, a natural question arises: *is this the fastest algorithm to solve the problem?*
 
-Recently, fine-grained complexity has been used to show that for many important problems, the standard DP algorithm *is* optimal. For example, researchers proved that for the edit distance problem there is no algorithm (whether or not it uses DP) that is faster than the standard DP algorithm by a polynomial factor (assuming $\text{SETH}$).
+Recently, fine-grained complexity has been used to show that for many important problems, the standard DP algorithm *is* optimal. For example, researchers proved that for the [edit distance problem](https://leetcode.com/problems/edit-distance/description/) there is no algorithm (whether or not it uses DP) that is faster than the standard DP algorithm by a polynomial factor (assuming $\text{SETH}$).
 
-On the other hand, there are some notable examples where a natural DP formulation is *not* optimal. For example, researchers showed that for the polygon triangulation problem the standard DP algorithm results in an $O(n^3)$ time solution while geometric techniques lead to an $O(n \log n)$ time solution, a polynomial speedup.
+On the other hand, there are some notable examples where a natural DP formulation is *not* optimal. For example, researchers showed that for the [polygon triangulation problem](https://leetcode.com/problems/minimum-score-triangulation-of-polygon/description/) the standard DP algorithm results in an $O(n^3)$ time solution while geometric techniques lead to an $O(n \log n)$ time solution, a polynomial speedup.
 
 So, we wonder:
 > For which problems can we achieve a polynomial speedup over the standard DP algorithm? And when is the standard DP algorithm already optimal?
