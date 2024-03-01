@@ -72,7 +72,7 @@ $$
 
 where $dp[j]$ is the $\text{LIS}$ of $x_1, \dots, x_j$ and $\mathbb{1}[x_j > x_i]$ is an indicator variable that returns one when $x_j > x_i$ and zero otherwise. The solution to the $\text{LIS}$ problem is given by $dp[n]$. Now let's break down the two cases.
 
-**Base Case** $j == 0$:
+**Base Case $j == 0$:**
 
 In the base case, we return zero when $j == 0$ because our sequence starts at $x_1$ and being at $x_0$ is out of bounds. So $dp[0]$ is undefined and the $\text{LIS}$ must have a length of zero.
 
@@ -125,7 +125,7 @@ and where solution to $\text{LIS}$ is given by $-dp[j]$. While $\text{LIS}$ is a
 
 Next, let's find the recurrence relation for the [coin change](https://leetcode.com/problems/coin-change/description/) ($\text{CC}$) problem:
 
-> Given an integer array of coins $C = [c_1, \dots, c_n]$ where $c_i$ is a coin worth $c_i$ cents, return the fewest number of coins needed to make $n$ cents. (Assume you have an infinite number of each kind of coin.)
+> Given an integer array of coins $C = [c_1, \dots, c_m]$ where $c_i$ is a coin worth $c_i$ cents, return the fewest number of coins needed to make $n$ cents. (Assume you have an infinite number of each kind of coin.)
 
 If we have coins $[1, 2, 5]$ and want to make a total of $n=11$ cents, we would return $3$ because $3$ coins -- $5, 5, 1$ -- is the smallest number of coins needed to make $11$ cents.
 
@@ -137,18 +137,74 @@ $$
 dp[j] 
     =
     \begin{cases}
+        \infty
+        &
+        \text{if $j < 0$}
+        \\
         0
         &
         \text{if $j == 0$} \\
-        \min_{c \in C : j - c \geq 0}
-        dp[j-c] + 1
+        \min_{1 \leq i \leq m}
+        dp[j-c_i] + 1
         &
         \text{otherwise.}
         \\
     \end{cases}
 $$
 
-where $dp[j]$ is the minimum number of coins needed to make $j$ cents. Intuitively, to compute $dp[j]$ we look at all possible coins $c \in C$ and see which coin we'd use 
+where $dp[j]$ is the minimum number of coins needed to make $j$ cents. The solution to the $\text{CC}$ problem is given by $dp[n]$; if $dp[n] == \infty$, then it is not possible to make $n$ cents using the set of coins $C$. Let's break down the three cases:
+
+**Base case $j == 0$:**
+
+The minimum number of coins to make $j = 0$ cents is, well, $0$ because you need $0$ coins to make $0$ cents.
+
+**Base case $j < 0$:**
+
+The minimum number of coins needed to make a negative number of cents, i.e. $j < 0$, is undefined. And because this is a minimization problem, we set this to $\infty$ to ensure this choice is not chosen.
+
+**Otherwise:**
+
+Here we have a positive number of cents. To compute $dp[j]$, the minimum number of coins needed to make $j$ cents, imagine we select a coin worth $c$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c$ cents, i.e. we need to know $dp[j-c]$. We write $+1$ because by using the coin $c$, we've increased the number of coins we've used by one.
+
+To find the minimum number of coins needed to make $j$ cents we try taking a $c$ cent coin 
+
+Intuitively, to compute $dp[j]$ we look at all possible coins $c \in C$ and see which coin we'd use 
+
+
+### Reformat Reccurence Relation
+
+$$
+dp[j]
+    =
+    \begin{cases}
+        0
+        &
+        \text{if $j == 0$} \\
+        \min_{0 \leq i < j} dp[i] + w[i, j]
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+where $w[i, j]$ is an $(n + 1) \times (n + 1)$ matrix defined as
+
+$$
+w[i, j]
+    =
+    \begin{cases}
+        1
+        &
+        \text{if $j-i \in C$}
+        \\
+        \infty
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+and where solution to $\text{LIS}$ is given by $dp[j]$. 
 
 ## Airplane Refueling Problem
 
