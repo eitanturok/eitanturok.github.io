@@ -204,10 +204,25 @@ $$
 
 and where solution to $\text{LIS}$ is given by $dp[n]$. Intuitively, the condition $j-i \in C$ means we add a one if there a coin worth $j-i$ cents in our array of coins $C$. We are trying to go from having $j$ cents to having $i$ cents and this is only possible if a coin worth $j-i$ cents exist. If no such coin exists, we want to avoid this situation and thus assign an $\infty$ value to this kind of case.
 
+In the original recurrence relation, we had a table of size $n$ and to compute each value, looped over all the $m$ coins. In this recurrence relation, we have a table of size $n$ and loop over all values less than $j$. Does this not change the time complexity from $O(nm)$ to $O(n^2)$?
+
 
 ## Airplane Refueling Problem
 
-The [airplane refueling](https://leetcode.com/problems/minimum-number-of-refueling-stops/description/) problem
+
+### Definition
+
+Lastly, let's find the recurrence relation for the [airplane refueling](https://leetcode.com/problems/minimum-number-of-refueling-stops/description/) ($\text{AR}$) problem:
+
+> Suppose an airplane is flying $x_n - x_0$ miles from source $x_0$ to destination $x_n$. Given a list of optional refueling stations at positions $X = [x_1, \dots, x_n]$, find the minimum cost way to fly from $x_0$ to $x_n$.
+>
+> More specifically:
+> * Let $0 = x_0 < x_1 < \dots < x_{n-1} < x_n$ so that the source is at position $0$ and airports are in order of the miles away from the source.
+> * Assume the airports are located along a straight line such that distance between airport $x_j$ and airport $x_i$ is $x_i - x_j$.
+> * Let the cost function of flying from airport $x_i$ to airport $x_j$ be $([x_j - x_i] -l)^2$ where $x_j - x_i$ is the distance traveled and $l$ is the optimal distance traveled for fuel efficiency reasons.
+
+If the optional refueling airports are located at positions $X=[1, 5, 7]$ and we prefer to travel $l=3$ miles at a time.
+
 
 # What is $k\text{D}\hspace{1mm}\text{LWS}$?
 
