@@ -4,7 +4,7 @@ title: Can You Solve Dynamic Programming Problems Faster?
 date: 2024-01-09 11:59:00-0400
 description: We prove you can solve dynamic programming problems polynomially faster if you have a simple function for the cost of transitioning from one DP state to another.
 tags: comments
-categories: explain-paper dynamic-programming cs-theory
+categories: explain-paper dynamic-programming cs-theory algorithms complexity
 giscus_comments: true
 related_posts: true
 
@@ -217,21 +217,20 @@ Lastly, let's find the recurrence relation for the [airplane refueling](https://
 > Suppose an airplane is flying $x_n - x_0$ miles from source $x_0$ to destination $x_n$. Given a list of optional refueling stations at positions $X = [x_1, \dots, x_n]$, find the minimum cost way to fly from $x_0$ to $x_n$.
 >
 > More specifically:
-> * Let $0 = x_0 < x_1 < \dots < x_{n-1} < x_n$ so that the source is at position $0$ and airports are in order of the miles away from the source.
+> * Let $0 = x_0 < x_1 < \dots < x_{n-1} < x_n$ so that the source is at position $0$ and airports are in order of the miles away they are from the source.
 > * Assume the airports are located along a straight line such that distance between airport $x_j$ and airport $x_i$ is $x_i - x_j$.
 > * Let the cost function of flying from airport $x_i$ to airport $x_j$ be $([x_j - x_i] -l)^2$ where $x_j - x_i$ is the distance traveled and $l$ is the optimal distance traveled for fuel efficiency reasons.
 
-If the optional refueling airports are located at positions $X=[1, 5, 7]$ and we prefer to travel $l=3$ miles at a time.
+If the optional refueling airports are located at positions $X=[1, 5, 7, 10]$ and we prefer to travel $l=3$ miles at a time, the minimum cost of traveling from the source $x_0 = 0$ to $x_4 = 10$ is ?.
 
 
 # What is $k\text{D}\hspace{1mm}\text{LWS}$?
 
 ## Grid Airplane Refueling Problem
 
-```{=html}
 <!-- 
 We prove that for $k\text{D}\hspace{1mm}\text{LWS}$ problems a polynomial speedup is possible whenever the cost to transition from one DP state to another is constant. The moment the cost to go from one DP state to another becomes slightly super-constant, it is impossible to achieve a polynomial speedup. -->
-```
+
 ## APSP
 
 $$
