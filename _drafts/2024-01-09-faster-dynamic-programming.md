@@ -84,7 +84,7 @@ These two cases are succinctly captured by the expression $\mathbb{1}[x_j > x_i]
 
 ### Reformat the Recurrence Relation
 
-Now we will write the recurrence relation in a slightly different form (we'll see why we need this later). Let
+Now we will write the recurrence relation in a slightly different form that will be similar to the $\text{LWS}$ recurrence relation. (). Let
 
 $$
 dp[j]
@@ -167,7 +167,7 @@ The minimum number of coins needed to make a negative number of cents, i.e. $j <
 
 In this case, we want to find $dp[j]$, the minimum number of coins needed to make $j$ cents. To do so, imagine we select a coin worth $c_i$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c_i$ cents, i.e. we need to know $dp[j-c_i]$. We add the $+1$ because by using the coin $c_i$, we've increased the number of coins we've used by one.
 
-### Reformat Reccurence Relation
+### Reformat Recurrence Relation
 
 $$
 dp[j]
