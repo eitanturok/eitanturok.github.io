@@ -137,13 +137,14 @@ $$
 dp[j] 
     =
     \begin{cases}
+        0
+        &
+        \text{if $j == 0$}
+        \\
         \infty
         &
         \text{if $j < 0$}
         \\
-        0
-        &
-        \text{if $j == 0$} \\
         \min_{1 \leq i \leq m}
         dp[j-c_i] + 1
         &
@@ -152,11 +153,11 @@ dp[j]
     \end{cases}
 $$
 
-where $dp[j]$ is the minimum number of coins needed to make $j$ cents. The solution to the $\text{CC}$ problem is given by $dp[n]$; if $dp[n] == \infty$, then it is not possible to make $n$ cents using the set of coins $C$. Let's break down the three cases:
+where $dp[j]$ is the minimum number of coins needed to make $j$ cents. The solution to the $\text{CC}$ problem is given by $dp[n]$; if $dp[n] == \infty$, then it is not possible to make $n$ cents using the coins in array $C$. Let's break down the three cases:
 
 **Base case $j == 0$:**
 
-The minimum number of coins to make $j = 0$ cents is, well, $0$ because you need $0$ coins to make $0$ cents.
+The minimum number of coins to make $j = 0$ cents is $0$ because you need $0$ coins to make $0$ cents.
 
 **Base case $j < 0$:**
 
@@ -164,12 +165,7 @@ The minimum number of coins needed to make a negative number of cents, i.e. $j <
 
 **Otherwise:**
 
-Here we have a positive number of cents. To compute $dp[j]$, the minimum number of coins needed to make $j$ cents, imagine we select a coin worth $c$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c$ cents, i.e. we need to know $dp[j-c]$. We write $+1$ because by using the coin $c$, we've increased the number of coins we've used by one.
-
-To find the minimum number of coins needed to make $j$ cents we try taking a $c$ cent coin 
-
-Intuitively, to compute $dp[j]$ we look at all possible coins $c \in C$ and see which coin we'd use 
-
+In this case, we want to find $dp[j]$, the minimum number of coins needed to make $j$ cents. To do so, imagine we select a coin worth $c_i$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c_i$ cents, i.e. we need to know $dp[j-c_i]$. We add the $+1$ because by using the coin $c_i$, we've increased the number of coins we've used by one.
 
 ### Reformat Reccurence Relation
 
