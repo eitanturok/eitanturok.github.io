@@ -31,7 +31,7 @@ Informally, our main result is thus:
 
 > For $k\text{D}\hspace{1mm}\text{LWS}$ problems we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
 
-This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how we proved these results, and the problems that we can now solve faster.
+This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how we proved these results, and the problems that we can now solve faster. 
 
 Let's dive in.
 
@@ -84,7 +84,7 @@ These two cases are succinctly captured by the expression $\mathbb{1}[x_j > x_i]
 
 ### Reformat the Recurrence Relation
 
-Now we will write the recurrence relation in a slightly different form that will be similar to the $\text{LWS}$ recurrence relation. (). Let
+Now we will reformat the $\text{LIS}$ recurrence relation so it more closely resembles the $\text{LWS}$ recurrence relation (more details about this later). Let $dp[j]$ be rewritten as
 
 $$
 dp[j]
@@ -169,6 +169,8 @@ In this case, we want to find $dp[j]$, the minimum number of coins needed to mak
 
 ### Reformat Recurrence Relation
 
+Now we will reformat the $\text{CC}$ recurrence relation so it more closely resembles the $\text{LWS}$ recurrence relation (more details about this later). Let $dp[j]$ be rewritten as
+
 $$
 dp[j]
     =
@@ -200,7 +202,8 @@ w[i, j]
     \end{cases}
 $$
 
-and where solution to $\text{LIS}$ is given by $dp[j]$. 
+and where solution to $\text{LIS}$ is given by $dp[n]$. Intuitively, the condition $j-i \in C$ means we add a one if there a coin worth $j-i$ cents in our array of coins $C$. We are trying to go from having $j$ cents to having $i$ cents and this is only possible if a coin worth $j-i$ cents exist. If no such coin exists, we want to avoid this situation and thus assign an $\infty$ value to this kind of case.
+
 
 ## Airplane Refueling Problem
 
@@ -265,3 +268,8 @@ w[i, j, k]
         \\
     \end{cases}
 $$
+
+
+Many of the problems I mention have links -- not to their Wikipedia pages but to their Leetcode pages. This is because many of the problems I discuss are 1) well-known and 2) useful, practical problems. Despite the math and the proofs, this paper does not live in theory alone. It is motivated by real-world problems.
+
+Make note about doing research with awesome collaborators.
