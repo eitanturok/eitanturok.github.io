@@ -32,7 +32,7 @@ Informally, our main result is thus:
 
 > For $k\text{D}\hspace{1mm}\text{LWS}$ problems we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
 
-This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how we proved these results, and the problems that we can now solve faster. 
+This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how we proved these results, and the problems that we can now solve faster.
 
 Let's dive in.
 
@@ -51,7 +51,7 @@ Given a sequence of items, many DP problems seek to find the subsequence of item
 Formally, $\text{LWS}$ is defined as follows:
 
 > Given $n$ items $X = [x_1, \dots, x_n]$ and a $(n+1) \times (n+1)$ cost matrix $w$ where $w[i, j]$ depends on $x_i, x_j$, compute the value $dp[n]$ given the recurrence relation
-> 
+>
 >$$
 dp[j]
     =
@@ -69,7 +69,7 @@ $$
 
 To compute $dp[j]$, the minimum cost way of getting to item $x_j$, we look at all previously computed sub-problems, i.e. all $dp[i]$ where $0 \leq i < j$. The cost matrix $w$ determines the cost of going from item $x_i$ to item $x_j$. And the weight in the least *weight* subsequence is determined by $w$, the cost matrix here.
 
-This is all a bit abstract. Let's give some examples.
+By appropriately setting the cost matrix $w$, many famous DP problems can be formulated as instances of the $\text{LWS}$ problem. This is all a bit abstract. Let's give some examples.
 
 
 ## Longest Increasing Subsequence Problem
@@ -137,7 +137,7 @@ $$
 w[i, j]
     =
     \begin{cases}
-        -1 
+        -1
         &
         \text{if $x_j > x_i$}
         \\
@@ -165,7 +165,7 @@ If we have coins $[1, 2, 5]$ and want to make a total of $n=11$ cents, we would 
 The recurrence relation for this problem is
 
 $$
-dp[j] 
+dp[j]
     =
     \begin{cases}
         0
@@ -259,13 +259,13 @@ If the optional refueling airports are located at positions $X=[1, 5, 7, 10]$ an
 
 ## Grid Airplane Refueling Problem
 
-<!-- 
+<!--
 We prove that for $k\text{D}\hspace{1mm}\text{LWS}$ problems a polynomial speedup is possible whenever the cost to transition from one DP state to another is constant. The moment the cost to go from one DP state to another becomes slightly super-constant, it is impossible to achieve a polynomial speedup. -->
 
 ## APSP
 
 $$
-dp[i, j] 
+dp[i, j]
     =
     \begin{cases}
         0
@@ -285,7 +285,7 @@ dp[i, j]
 $$
 
 $$
-dp[i, j] 
+dp[i, j]
     =
     \begin{cases}
         0
@@ -301,7 +301,7 @@ $$
 where
 
 $$
-w[i, j, k] 
+w[i, j, k]
     =
     \begin{cases}
         - \infty
