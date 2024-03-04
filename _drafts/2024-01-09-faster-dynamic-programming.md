@@ -7,6 +7,7 @@ tags: comments
 categories: explain-paper dynamic-programming cs-theory algorithms complexity
 giscus_comments: true
 related_posts: true
+bibliography: 2018-12-22-distill.bib
 
 toc:
   - name: Background
@@ -35,11 +36,41 @@ This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how
 
 Let's dive in.
 
-# What is $\text{LWS}$?
+# $\text{LWS}$: Dynamic Programming in One Dimension
 
 When most students learn about DP they think it is all about filling in DP tables. This is not true! The most important part of DP is finding the recurrence relation -- a recursive equation that gives a solution for the problem in terms of simpler sub-problems. This is the heart of dynamic programming and thus a natural way to characterize different DP problems.
 
-$k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $k\text{D}\hspace{1mm}\text{LWS}$, we will analyze the recurrence relations of three different DP problems and create a general recurrence relation that captures all of these problems -- this is the $k\text{D}\hspace{1mm}\text{LWS}$ recurrence relation!
+$k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $k\text{D}\hspace{1mm}\text{LWS}$, we will first focus on the one dimensional version of $k\text{D}\hspace{1mm}\text{LWS}$: $\text{LWS}$. In the next section we will generalize this to higher dimensions and discuss $k\text{D}\hspace{1mm}\text{LWS}$ itself.
+
+More specifically, in this section we will define the $\text{LWS}$ recurrence relation, gives three examples of DP problems which are secretly $\text{LWS}$ problems in disguise, and then discuss faster ways to solve $\text{LWS}$ problems.
+
+## What is $\text{LWS}$?
+
+Given a sequence of items, many DP problems seek to find the subsequence of items which have the minimum weight or cost. In 1985 Daniel Hirschberg and Lawrence Larmore noticed this and introduced the least weight subsequence problem, known as $\text{LWS}$.
+
+Formally, $\text{LWS}$ is defined as follows:
+
+> Given $n$ items $X = [x_1, \dots, x_n]$ and a $(n+1) \times (n+1)$ cost matrix $w$ where $w[i, j]$ depends on $x_i, x_j$, compute the value $dp[n]$ given the recurrence relation
+> 
+>$$
+dp[j]
+    =
+    \begin{cases}
+        0
+        &
+        \text{if $j == 0$}
+        \\
+        \min_{0 \leq i < j} dp[i] + w[i, j]
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+To compute $dp[j]$, the minimum cost way of getting to item $x_j$, we look at all previously computed sub-problems, i.e. all $dp[i]$ where $0 \leq i < j$. The cost matrix $w$ determines the cost of going from item $x_i$ to item $x_j$. And the weight in the least *weight* subsequence is determined by $w$, the cost matrix here.
+
+This is all a bit abstract. Let's give some examples.
+
 
 ## Longest Increasing Subsequence Problem
 
