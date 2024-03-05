@@ -44,9 +44,7 @@ $k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind 
 
 ## What is $\text{LWS}$?
 
-In 1985 Daniel Hirschberg and Lawrence Larmore noticed that many DP problems have a similar structure: given a sequence of items, find the subsequence of items which have the minimum weight or cost. Thus $\text{LWS}$, the least weight subsequence problem, was born.
-
-Formally, $\text{LWS}$ is defined as follows:
+In 1985 Daniel Hirschberg and Lawrence Larmore noticed that many DP problems have a similar structure: given a sequence of items, find the subsequence of items which have the minimum weight or cost. They coined this problem the least weight subsequence problem or $\text{LWS}$. Formally, $\text{LWS}$ is defined as follows:
 
 > Given $n$ items $X = [x_1, \dots, x_n]$ and a $(n+1) \times (n+1)$ cost matrix $w$ where $w[i, j]$ depends on $x_i, x_j$, compute the value $dp[n]$ given the recurrence relation
 >
@@ -65,10 +63,9 @@ dp[j]
     \end{cases}
 $$
 
-In this recurrence relation, $dp[j]$ is the minimum cost way of getting to item $x_j$. To compute $dp[j]$ we find the minimum previously computed values, $dp[i]$, plus the cost of transitioning from $x_j$ to $x_i$, $w[i, j]$. Notice that the cost matrix $w$ determines the cost of going from item $x_i$ to item $x_j$.
+In this recurrence relation, $dp[j]$ is the minimum cost way of getting to item $x_j$. To compute $dp[j]$ we find the minimum over a previously computed value ($dp[i]$) plus the cost of transitioning from item $x_j$ to item $x_i$ ($w[i, j]$).
 
-Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Let's give some examples.
-
+The cost matrix $w$ is incredibly important -- it determines the cost of going from item $x_i$ to item $x_j$ and thus the outcome of the whole problem. Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Let's give some examples.
 
 ## Longest Increasing Subsequence Problem
 
