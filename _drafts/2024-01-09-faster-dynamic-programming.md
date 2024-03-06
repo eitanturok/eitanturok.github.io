@@ -58,7 +58,7 @@ If our array is $[10,9,2,5,3,7,101,18]$, our $\text{LIS}$ is $[2,3,7,101]$. So w
 
 ### Recurrence Relation
 
-The recurrence relation for this problem is
+The recurrence relation for $\text{LIS}$ is
 
 $$
 dp[j]
@@ -209,25 +209,44 @@ $$
 
 and where solution to $\text{LIS}$ is given by $dp[n]$. Intuitively, the condition $j-i \in C$ means we add a one if there a coin worth $j-i$ cents in our array of coins $C$. We are trying to go from having $j$ cents to having $i$ cents and this is only possible if a coin worth $j-i$ cents exist. If no such coin exists, we want to avoid this situation and thus assign an $\infty$ value to this kind of case.
 
-In the original recurrence relation, we had a table of size $n$ and to compute each value, looped over all the $m$ coins. In this recurrence relation, we have a table of size $n$ and loop over all values less than $j$. Does this not change the time complexity from $O(nm)$ to $O(n^2)$?
-
+> In the original recurrence relation, we had a table of size $n$ and to compute each value, looped over all the $m$ coins. In this recurrence relation, we have a table of size $n$ and loop over all values less than $j$. Does this not change the time complexity from $O(nm)$ to $O(n^2)$?
 
 ## Airplane Refueling Problem
-
 
 ### Definition
 
 Lastly, let's find the recurrence relation for the [airplane refueling](https://leetcode.com/problems/minimum-number-of-refueling-stops/description/) ($\text{AR}$) problem:
 
-> Suppose an airplane is flying $x_n - x_0$ miles from source $x_0$ to destination $x_n$. Given a list of optional refueling stations at positions $X = [x_1, \dots, x_n]$, find the minimum cost way to fly from $x_0$ to $x_n$.
+> Suppose an airplane is flying from source $x_0$ to destination $x_n$. Given a list of optional refueling stations at positions $X = [x_1, \dots, x_n]$, return the minimum cost way for to fly from $x_0$ to $x_n$. It costs $([x_j - x_i] - l)^2$ to fly from airport $x_i$ to airport $x_j$ where $l$ is the optimal distance traveled for fuel efficiency reasons.
 >
 > More specifically:
 > * Let $0 = x_0 < x_1 < \dots < x_{n-1} < x_n$ so that the source is at position $0$ and airports are in order of the miles away they are from the source.
 > * Assume the airports are located along a straight line such that distance between airport $x_j$ and airport $x_i$ is $x_i - x_j$.
-> * Let the cost function of flying from airport $x_i$ to airport $x_j$ be $([x_j - x_i] -l)^2$ where $x_j - x_i$ is the distance traveled and $l$ is the optimal distance traveled for fuel efficiency reasons.
 
 If the optional refueling airports are located at positions $X=[1, 5, 7, 10]$ and we prefer to travel $l=3$ miles at a time, the minimum cost of traveling from the source $x_0 = 0$ to $x_4 = 10$ is ?.
 
+### Recurrence Relation
+
+The recurrence relation for $\text{AR}$ is
+
+$$
+dp[j]
+    =
+    \begin{cases}
+        0
+        &
+        \text{if $j == 0$}
+        \\
+        \max_{1 \leq i \leq n} dp[i] + ([x_j - x_i] - l)^2
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+where $dp[j]$ is the minimum cost way to fly $j$ miles 
+OR
+minimum cost way to fly to the airport $x_j$. 
 
 ## Putting it all together
 
@@ -321,6 +340,8 @@ dp[j]
 $$
 
 All three of these recurrence relations are the exact same, except for their cost matrices $w$. Why? What does this mean? 
+
+These problems are all really examples of a larger class of problems, the $\text{LWS}$ problem.
 
 By appropriately setting the cost matrix $w$, we can formulate many DP problems as instances of the $\text{LWS}$ problem.
 
