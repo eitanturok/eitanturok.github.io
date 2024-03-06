@@ -172,7 +172,7 @@ The minimum number of coins needed to make a negative number of cents, i.e. $j <
 
 In this case, we want to find $dp[j]$, the minimum number of coins needed to make $j$ cents. To do so, imagine we select a coin worth $c_i$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c_i$ cents, i.e. we need to know $dp[j-c_i]$. We add the $+1$ because by using the coin $c_i$, we've increased the number of coins we've used by one.
 
-### Reformat Recurrence Relation
+### Reformat the Recurrence Relation
 
 Now we will reformat the $\text{CC}$ recurrence relation so it more closely resembles the $\text{LWS}$ recurrence relation (more details about this later). Let $dp[j]$ be rewritten as
 
@@ -237,16 +237,51 @@ dp[j]
         &
         \text{if $j == 0$}
         \\
-        \max_{1 \leq i \leq n} dp[i] + ([x_j - x_i] - l)^2
+        \max_{1 \leq i < j} dp[i] + ([x_j - x_i] - l)^2
         &
         \text{otherwise.}
         \\
     \end{cases}
 $$
 
-where $dp[j]$ is the minimum cost way to fly $j$ miles 
-OR
-minimum cost way to fly to the airport $x_j$. 
+where $dp[j]$ is the minimum cost way to fly from source $x_0$ to airport $x_j$. The solution to the $\text{AR}$ problem is given by $dp[n]$. Let's break down the two cases:
+
+**Base Case $j == 0$:**
+
+When $j == 0$, we are located at airport $x_0$ and it costs $0$ to go from source $x_0$ to destination $x_j = x_0$.
+
+**Otherwise:**
+
+To compute $dp[j]$, the cheapest way of flying from $x_0$ to $x_j$, we take the cheapest combination of 
+* the cost of flying from $x_i$ to $x_j$, $([x_j - x_i] - l)^2$
+* plus the cheapest possible cost of flying from $x_0$ to $x_i$, $dp[i]$.
+
+### Reformat the Recurrence Relation
+
+Now we will reformat the $\text{CC}$ recurrence relation so it more closely resembles the $\text{LWS}$ recurrence relation (more details about this later). Let $dp[j]$ be rewritten as
+
+$$
+dp[j]
+    =
+    \begin{cases}
+        0
+        &
+        \text{if $j == 0$} \\
+        \min_{0 \leq i < j} dp[i] + w[i, j]
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+where $w[i, j]$ is an $(n + 1) \times (n + 1)$ matrix defined as
+
+$$
+    w[i, j]
+    =
+    ([x_j - x_i] - l)^2.
+$$
+
 
 ## Putting it all together
 
@@ -310,7 +345,7 @@ dp[j]
     \end{cases}
 $$
 
-**Airplane Refueling $\text{AP}$:**
+**Airplane Refueling $\text{AR}$:**
 
 $$
 dp[j]
@@ -327,16 +362,7 @@ dp[j]
     \text{ where }
     w[i, j]
     =
-    \begin{cases}
-        1
-        &
-        \text{if $j-i \in C$}
-        \\
-        \infty
-        &
-        \text{otherwise.}
-        \\
-    \end{cases}
+    ([x_j - x_i] - l)^2
 $$
 
 All three of these recurrence relations are the exact same, except for their cost matrices $w$. Why? What does this mean? 
