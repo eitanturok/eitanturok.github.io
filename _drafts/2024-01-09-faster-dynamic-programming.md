@@ -229,9 +229,11 @@ Lastly, let's find the recurrence relation for the [airplane refueling](https://
 If the optional refueling airports are located at positions $X=[1, 5, 7, 10]$ and we prefer to travel $l=3$ miles at a time, the minimum cost of traveling from the source $x_0 = 0$ to $x_4 = 10$ is ?.
 
 
-## Define $\text{LWS}$
+## Putting it all together
 
-In 1985 Daniel Hirschberg and Lawrence Larmore noticed something interesting: all three of our DP problems have the exact same recurrence relation:
+Let's take another look at our three reformatted recurrence relations:
+
+**Longest Increasing Subsequence $\text{LIS}$:**
 
 $$
 dp[j]
@@ -245,13 +247,84 @@ dp[j]
         \text{otherwise.}
         \\
     \end{cases}
+    \text{ where }
+    w[i, j]
+    =
+    \begin{cases}
+        -1
+        &
+        \text{if $x_j > x_i$}
+        \\
+        0
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
 $$
 
-The primary difference is the the structure of the cost matrix $w$.
+**Coin Change $\text{CC}$:**
 
+$$
+dp[j]
+    =
+    \begin{cases}
+        0
+        &
+        \text{if $j == 0$} \\
+        \min_{0 \leq i < j} dp[i] + w[i, j]
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+    \text{ where }
+    w[i, j]
+    =
+    \begin{cases}
+        1
+        &
+        \text{if $j-i \in C$}
+        \\
+        \infty
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
 
+**Airplane Refueling $\text{AP}$:**
 
-In 1985 Daniel Hirschberg and Lawrence Larmore noticed that many DP problems have a similar structure: given a sequence of items, find the subsequence of items which have the minimum weight or cost. They coined this problem the least weight subsequence problem or $\text{LWS}$. Formally, $\text{LWS}$ is defined as follows:
+$$
+dp[j]
+    =
+    \begin{cases}
+        0
+        &
+        \text{if $j == 0$} \\
+        \min_{0 \leq i < j} dp[i] + w[i, j]
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+    \text{ where }
+    w[i, j]
+    =
+    \begin{cases}
+        1
+        &
+        \text{if $j-i \in C$}
+        \\
+        \infty
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+All three of these recurrence relations are the exact same, except for their cost matrices $w$. Why? What does this mean? 
+
+By appropriately setting the cost matrix $w$, we can formulate many DP problems as instances of the $\text{LWS}$ problem.
+
+In 1985 Daniel Hirschberg and Lawrence Larmore noticed the same thing, that many DP problems have a similar structure: given a sequence of items, find the subsequence of items which have the minimum weight or cost. They coined this problem the least weight subsequence problem or $\text{LWS}$. Formally, $\text{LWS}$ is defined as follows:
 
 > Given $n$ items $X = [x_1, \dots, x_n]$ and a $(n+1) \times (n+1)$ cost matrix $w$ where $w[i, j]$ depends on $x_i, x_j$, compute the value $dp[n]$ given the recurrence relation
 >
