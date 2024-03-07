@@ -434,11 +434,13 @@ dp[j]
     ([x_j - x_i] - l)^2
 $$
 
-All three of these recurrence relations are the exact same, except for their cost matrices $w$. Why? What does this mean?
+These three recurrence relations are all the exact same, except for their cost matrices $w$. Why? What does this mean?
 
-In 1985 two researchers Daniel Hirschberg and Lawrence Larmore noticed the same thing, that numerous DP problems have a nearly identical recurrence relation and differ only in the cost matrix $w$. Instead of viewing these problems as three different DP problems, they wondered if these problems can be subsumed by one mega-DP problem.
+In 1985 two researchers Daniel Hirschberg and Lawrence Larmore noticed the same thing: numerous DP problems have an identical recurrence relation and differ only in the cost matrix $w$. Could it be that many famous DP problems are the exact same except for $w[i, j]$, the cost of transitioning from one item/state $x_i$ to another $x_j$? By appropriately setting the cost matrix $w$, discovered Hirschberg and Larmore, we can formulate many famous DP problems as instances of this one recurrence relation. Wild -- it seems that many DP problems are one and the same.
 
-These problems all possessed similar structure: given a sequence of items, find the subsequence of items which have the minimum weight or cost. They coined this larger DP problem the least weight subsequence problem or $\text{LWS}$. Formally, $\text{LWS}$ is defined as follows:
+But what is this recurrence relation that keeps on appearing everywhere? This recurrence relation has a fundamental structure: given a sequence of items, find the subsequence of items which have the minimum weight or cost. For instance: $\text{LIS}$ wants the longest subsequence of integers that is strictly increasing; $\text{CC}$ wants the smallest subsequence of coins that equal $n$ cents; $\text{AR}$ wants the cheapest subsequence of airports that allow us to fly from $x_0$ to $x_n$. So many DP problems are about finding the minimum weight subsequence that Hirschberg and Larmore named this DP problem the least weight subsequence problem or $\text{LWS}$.
+
+Formally, $\text{LWS}$ is defined as follows:
 
 > Given $n$ items $X = [x_1, \dots, x_n]$ and a $(n+1) \times (n+1)$ cost matrix $w$ where $w[i, j]$ depends on $x_i, x_j$, compute the value $dp[n]$ given the recurrence relation
 >
@@ -457,12 +459,10 @@ dp[j]
     \end{cases}
 $$
 
-In this recurrence relation, $dp[j]$ is the minimum cost way of getting to item $x_j$. To compute $dp[j]$ we find the minimum over a previously computed value ($dp[i]$) plus the cost of transitioning from item $x_j$ to item $x_i$ ($w[i, j]$).
+In this recurrence relation, $dp[j]$ is the minimum cost way of getting to item $x_j$. To compute $dp[j]$ we find the minimum over a previously computed value ($dp[i]$) plus the cost of transitioning from item $x_j$ to item $x_i$ ($w[i, j]$). The item $x_i$ with the cheapest previously-computed value and transition cost will be included in the subsequence.
 
-The cost matrix $w$ is incredibly important -- it determines the cost of going from item $x_i$ to item $x_j$ and thus the outcome of the whole problem. Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. This is exactly what we see with the problems we've analyzed! By appropriately setting the cost matrix $w$, we can turn the general $\text{LWS}$ recurrence relation into the recurrence relation for the $\text{LIS}$, $\text{CC}$, or $\text{AR}$ problems!
+Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Indeed, by defining the cost matrix $w$ carefully we can turn the general $\text{LWS}$ recurrence relation into the recurrence relation for the $\text{LIS}$, $\text{CC}$, and $\text{AR}$ problems!
 
-
-$k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $k\text{D}\hspace{1mm}\text{LWS}$, we will first focus on the one dimensional version of $k\text{D}\hspace{1mm}\text{LWS}$: $\text{LWS}$. In this section we will define the $\text{LWS}$ recurrence relation, gives three examples of DP problems which are $\text{LWS}$ problems in disguise, and then discuss faster ways to solve $\text{LWS}$ problems.
 
 ## Speed ups for $\text{LWS}$:
 
