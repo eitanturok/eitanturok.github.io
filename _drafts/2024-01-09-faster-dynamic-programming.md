@@ -465,14 +465,20 @@ dp[j]
     \end{cases}
 $$
 
-In this recurrence relation, $dp[j]$ is the minimum cost way of getting to item $x_j$. To compute $dp[j]$ we find the minimum over a previously computed value ($dp[i]$) plus the cost of transitioning from item $x_j$ to item $x_i$ ($w[i, j]$).
+In this recurrence relation, $dp[j]$ is the cheapest way of getting to item $x_j$. To compute $dp[j]$ we find the minimum over a previously computed value ($dp[i]$) plus the cost of transitioning from item $x_j$ to item $x_i$ ($w[i, j]$).
 
 Here is where the *subsequence* part of $\text{LWS}$ comes into play: to compute $dp[n]$, we first find the item $x_{i_1}$ with the minimum $dp[i_1] + w[i_1, n]$ value and include it in the our final answer's subsequence. Then to compute $dp[i_1]$ we find the next item $x_{i_2}$ that results in the minimum $dp[i_2] + w[i_2, i_1]$ value and include it in our final answer's subsequence. We repeat the pattern and end up with a subsequence of items $x_{i_1}, x_{i_2}, \dots$ that result in the minimum cost value for $dp[n]$. This subsequence $x_{i_1}, x_{i_2}, \dots$ is our least weight *subsequence*.
 
 Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Indeed, by defining the cost matrix $w$ carefully we can turn the general $\text{LWS}$ recurrence relation into the recurrence relation for the $\text{LIS}$, $\text{CC}$, and $\text{AR}$ problems! It seems that $\text{LWs}$ is some sort of fundamental problem and numerous problems are just $\text{LWS}$ problems in disguise.
 
-## Speed ups for $\text{LWS}$:
+## Solving $\text{LWS}$ Faster:
 
+Straightforward DP solves the $\text{LWS}$ problem in $O(n^2)$ time. This is because we have $n$ entries in our $dp$ table and each entry takes $O(n)$ time to compute. (Each entry iterates over $i$ where $0 \leq i < j$ and in the worst case $j$ equals $n$.) Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read the input, so a faster algorithm isn’t possible in general.
+
+However, in 2017 three researchers from UC San Diego -- Marvin Künnemann, Ramamohan Paturi, and Stefan Schneider -- challenged this assumption. They noticed that if one can input $w$ in a more compact form, perhaps a faster algorithm would be possible. Künnemann et al. focused on the case where $w$ is a low-rank matrix.
+
+
+If you sort the LWS problem, it becomes low rank!
 
 # What is $k\text{D}\hspace{1mm}\text{LWS}$?
 
