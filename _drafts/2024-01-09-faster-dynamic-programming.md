@@ -434,11 +434,17 @@ dp[j]
     ([x_j - x_i] - l)^2
 $$
 
-These three recurrence relations are all the exact same, except for their cost matrices $w$. Why? What does this mean?
+These three recurrence relations are all the exact same, except for their cost matrices $w$. Interesting -- what does this mean?
 
-In 1985 two researchers Daniel Hirschberg and Lawrence Larmore noticed the same thing: numerous DP problems have identical recurrence relations and differ only in the cost matrix $w$. Could it be that many famous DP problems are the exact same except for the cost of transitioning from one item $x_i$ to another $x_j$? What a fascinating idea, perhaps on some fundamental level many DP problems seem to be one and the same (up to the cost matrix $w$).
+In 1985 two researchers Daniel Hirschberg and Lawrence Larmore noticed the same thing: numerous DP problems have identical recurrence relations and differ only in the cost matrix $w$. Could it be that many famous DP problems are the exact same except for the cost of transitioning from one item $x_i$ to another $x_j$? What a wild idea...
 
-But what is this recurrence relation that keeps on appearing everywhere? Take a closer look. This recurrence relation has a fundamental structure: given a sequence of items, find the subsequence of items which have the minimum weight or cost. For instance: $\text{LIS}$ wants the longest subsequence of integers that is strictly increasing; $\text{CC}$ wants the smallest subsequence of coins that equal $n$ cents; $\text{AR}$ wants the cheapest subsequence of airports that allow us to fly from $x_0$ to $x_n$. All of these DP problems want to find the minimum weight subsequence of items. Hirschberg and Larmore thus named this DP problem the least weight subsequence problem or $\text{LWS}$.
+Take a closer look at this recurrence relation and we see a certain structure arise: given a sequence of items, this recurrence relation tries to find the subsequence of items which have the minimum weight or cost. For instance:
+
+* $\text{LIS}$ wants the longest subsequence of integers that is strictly increasing
+* $\text{CC}$ wants the smallest subsequence of coins that equal $n$ cents
+* $\text{AR}$ wants the cheapest subsequence of airports that allow us to fly from $x_0$ to $x_n$.
+  
+All of these DP problems want to find the minimum weight subsequence of items. Hirschberg and Larmore thus named this DP problem the least weight subsequence problem or $\text{LWS}$.
 
 Formally, $\text{LWS}$ is defined as follows:
 
@@ -459,10 +465,11 @@ dp[j]
     \end{cases}
 $$
 
-In this recurrence relation, $dp[j]$ is the minimum cost way of getting to item $x_j$. To compute $dp[j]$ we find the minimum over a previously computed value ($dp[i]$) plus the cost of transitioning from item $x_j$ to item $x_i$ ($w[i, j]$). The item $x_i$ with the cheapest previously-computed value and transition cost will be included in the subsequence.
+In this recurrence relation, $dp[j]$ is the minimum cost way of getting to item $x_j$. To compute $dp[j]$ we find the minimum over a previously computed value ($dp[i]$) plus the cost of transitioning from item $x_j$ to item $x_i$ ($w[i, j]$).
 
-Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Indeed, by defining the cost matrix $w$ carefully we can turn the general $\text{LWS}$ recurrence relation into the recurrence relation for the $\text{LIS}$, $\text{CC}$, and $\text{AR}$ problems!
+Here is where the *subsequence* part of $\text{LWS}$ comes into play: to compute $dp[n]$, we first find the item $x_{i_1}$ with the minimum $dp[i_1] + w[i_1, n]$ value and include it in the our final answer's subsequence. Then to compute $dp[i_1]$ we find the next item $x_{i_2}$ that results in the minimum $dp[i_2] + w[i_2, i_1]$ value and include it in our final answer's subsequence. We repeat the pattern and end up with a subsequence of items $x_{i_1}, x_{i_2}, \dots$ that result in the minimum cost value for $dp[n]$. This subsequence $x_{i_1}, x_{i_2}, \dots$ is our least weight *subsequence*.
 
+Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Indeed, by defining the cost matrix $w$ carefully we can turn the general $\text{LWS}$ recurrence relation into the recurrence relation for the $\text{LIS}$, $\text{CC}$, and $\text{AR}$ problems! It seems that $\text{LWs}$ is some sort of fundamental problem and numerous problems are just $\text{LWS}$ problems in disguise.
 
 ## Speed ups for $\text{LWS}$:
 
