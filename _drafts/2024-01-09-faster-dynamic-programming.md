@@ -10,9 +10,16 @@ related_posts: true
 bibliography: 2018-12-22-distill.bib
 
 toc:
-  - name: Background
-  - name: The Paper
+  - name: Introduction
+  - name: $\text{LWS}$: Dynamic Programming in One Dimension
+    - name: Longest Increasing Subsequence Problem
+    - name: Coin Change Problem
+    - name: Airplane Refueling Problem
+    - name: Putting It All Together
+  - name: Solving $\text{LWS}$ Faster
 ---
+
+# Introduction
 
 Dynamic programming (DP) is one of the most common algorithmic paradigms, used everywhere from DNA sequencing and financial modeling to matrix multiplication and shortest path algorithms. When one solves a problem using DP, a natural question arises: *is this the fastest algorithm to solve the problem?*
 
@@ -24,15 +31,15 @@ So, we wonder:
 
 > For which problems can we achieve a polynomial speedup over the standard DP algorithm? And when is the standard DP algorithm already optimal?
 
-In our [latest work](https://arxiv.org/abs/2309.04683), we provide an answer to this question for certain kinds of DP problems, specifically for $k$-dimensional Least Weighted Subsequence ($k\text{D}\hspace{1mm}\text{LWS}$) DP problems.
+In our [latest work](https://arxiv.org/abs/2309.04683), we provide an answer to this question for certain kinds of DP problems, specifically for $k$-dimensional Least Weight Subsequence ($k\text{D}\hspace{1mm}\text{LWS}$) DP problems.
 
 We prove that achieving a polynomial speedup for $k\text{D}\hspace{1mm}\text{LWS}$ depends on the cost of transitioning from one DP state to another. This cost is expressed as a matrix in two dimensions or, analogously, a tensor in higher dimensions. If this cost tensor has constant rank, then it *is possible* to achieve a polynomial speedup. But if the rank is slightly greater than constant, a polynomial speedup *is impossible* (assuming $\text{SETH}$).
 
 This is a beautiful result: if the cost tensor has a simple structure, i.e. constant rank, we can exploit it to solve the problem faster. But once the cost tensor becomes slightly more complex, i.e. super-constant rank, there is a naturally occurring barrier that makes it impossible to solve the problem any faster. This suggests there is some inherent difference between a constant and super-constant rank, a fundamental transition point where the computation goes from fast to slow.
 
-Informally, our main result is thus:
+Informally, our main result is:
 
-> For $k\text{D}\hspace{1mm}\text{LWS}$ problems, we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
+> For $k\text{D}\hspace{1mm}\text{LWS}$ DP problems, we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
 
 This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how we proved these results, and the problems that we can now solve faster.
 
@@ -42,7 +49,7 @@ Let's dive in.
 
 When most students learn about DP they think it is all about filling in DP tables. This is not true! The most important part of DP is finding the recurrence relation -- a recursive equation that gives a solution for the problem in terms of simpler sub-problems. This is the heart of dynamic programming and thus a natural way to characterize different DP problems.
 
-$k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $k\text{D}\hspace{1mm}\text{LWS}$, we will first focus on the one dimensional version of $k\text{D}\hspace{1mm}\text{LWS}$: $\text{LWS}$. In this section we will analyze the recurrence relations of three different DP problems and create a general recurrence relation that captures all of these problems -- this is the $\text{LWS}$ recurrence relation!
+$k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $k\text{D}\hspace{1mm}\text{LWS}$, we will first focus on the one dimensional version of $k\text{D}\hspace{1mm}\text{LWS}$: $\text{LWS}$. In this section we will analyze the recurrence relations of three different DP problems and create a general recurrence relation that captures all of these problems -- this will be the $\text{LWS}$ recurrence relation!
 
 ## Longest Increasing Subsequence Problem
 
@@ -124,7 +131,7 @@ dp[j]
     \end{cases}
 $$
 
-where $w[i, j]$ is an $(n + 1) \times (n + 1)$ matrix defined as
+where $w[i, j]$ is an $n \times n$ matrix defined as
 
 $$
 w[i, j]
@@ -141,10 +148,7 @@ w[i, j]
     \end{cases}
 $$
 
-Here, the solution to $\text{LIS}$ is given by $-dp[j]$. While $\text{LIS}$ is a maximization problem, this is a minimization problem and so we include a $-1$ instead of a $+1$ in $w$.
-
-> INSERT EXPLANATION HERE ABOUT NEW RECURRENCE RELATION.
-
+Notice that $w[i, j]$ equals negative one when $x_i$ can be added to a subsequence which ends in $x_j$ , thus increasing the length of a strictly increasing subsequence by $1$. Since $\text{LIS}$ is a maximization problem and $\text{LWS}$ is a minimization problem, the weights are $-1$, not $1$, and the solution is given by $−T[n]$.
 
 ## Coin Change Problem
 
@@ -152,7 +156,7 @@ Here, the solution to $\text{LIS}$ is given by $-dp[j]$. While $\text{LIS}$ is a
 
 Next, let's find the recurrence relation for the [coin change](https://leetcode.com/problems/coin-change/description/) ($\text{CC}$) problem:
 
-> Given an integer array of coins $C = [c_1, \dots, c_m]$ where $c_i$ is a coin worth $c_i$ cents, return the fewest number of coins needed to make $n$ cents. (Assume you have an infinite number of each kind of coin.)
+> Given an integer array of $m$ coins $C = [c_1, \dots, c_m]$ where $c_i$ is a coin worth $c_i$ cents, return the fewest number of coins needed to make $n$ cents. (Assume you have an infinite number of each kind of coin.)
 
 If we have coins $[1, 2, 5]$ and want to make a total of $n=11$ cents, we would return $3$ because $3$ coins -- $5, 5, 1$ -- is the smallest number of coins needed to make $11$ cents.
 
@@ -180,7 +184,7 @@ dp[j]
     \end{cases}
 $$
 
-where $dp[j]$ is the minimum number of coins needed to make $j$ cents. The solution to the $\text{CC}$ problem is given by $dp[n]$; if $dp[n] == \infty$, then it is not possible to make $n$ cents using the coins in array $C$. Let's break down the three cases:
+where $dp[j]$ is the minimum number of coins needed to make $j$ cents. The solution to the $\text{CC}$ problem is given by $dp[n]$. If $dp[n] == \infty$, then it is not possible to make $n$ cents using the coins in array $C$. Now, let's break down the three cases:
 
 **Base case $j == 0$:**
 
@@ -192,7 +196,7 @@ The minimum number of coins needed to make a negative number of cents, i.e. $j <
 
 **Otherwise:**
 
-In this case, we want to find $dp[j]$, the minimum number of coins needed to make $j$ cents. To do so, imagine we select a coin worth $c_i$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c_i$ cents, i.e. we need to know $dp[j-c_i]$. We add the $+1$ because by using the coin $c_i$, we've increased the number of coins we've used by one.
+Here, we want to find $dp[j]$, the minimum number of coins needed to make $j$ cents. To do so, imagine we select a coin worth $c_i$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c_i$ cents, i.e. we need to know $dp[j-c_i]$. We add the $+1$ because by using the coin $c_i$, we've increased the number of coins we've used by one.
 
 ### Reformat the Recurrence Relation
 
@@ -234,7 +238,7 @@ dp[j]
     \end{cases}
 $$
 
-where $w[i, j]$ is an $(n + 1) \times (n + 1)$ matrix defined as
+where $w[i, j]$ is an $n \times n$ matrix defined as
 
 $$
 w[i, j]
@@ -251,11 +255,11 @@ w[i, j]
     \end{cases}
 $$
 
-and where solution to $\text{LIS}$ is given by $dp[n]$.
+and where solution to $\text{CC}$ is given by $dp[n]$.
 
-Intuitively, the condition $j-i \in C$ means we add a one if there a coin worth $j-i$ cents in our array of coins $C$. We are trying to go from having $j$ cents to having $i$ cents and this is only possible if a coin worth $j-i$ cents exist. If no such coin exists, we want to avoid this situation and thus assign an $\infty$ value to this kind of case.
+The condition $j-i \in C$ means we add a one if there a coin worth $j-i$ cents in our array of coins $C$ because we can only go from having $j$ cents to having $i$ cents if a coin worth $j-i$ cents exist. If no coin worth $j - i$ cents exists, we cannot go from $j$ cents to $i$ cents and thus assign an $\infty$ value to avoid this kind of case.
 
-> In the original recurrence relation, we had a table of size $n$ and to compute each value, looped over all the $m$ coins. In this recurrence relation, we have a table of size $n$ and loop over all values less than $j$. Does this not change the time complexity from $O(nm)$ to $O(n^2)$?
+> In the original recurrence relation, we had a table of size $n$ and to compute each value, looped over all the $m$ coins, giving us a run time of $O(nm)$. In this recurrence relation, we have a table of size $n$ and loop over all values less than $j$, giving us a worst case run time of $O(n^2)$. Does this not change the time complexity from $O(nm)$ to $O(n^2)$? Does this make things worse? Do we always assume $m << n$?
 
 ## Airplane Refueling Problem
 
@@ -263,11 +267,11 @@ Intuitively, the condition $j-i \in C$ means we add a one if there a coin worth 
 
 Lastly, let's find the recurrence relation for the [airplane refueling](https://leetcode.com/problems/minimum-number-of-refueling-stops/description/) ($\text{AR}$) problem:
 
-> Suppose an airplane is flying from source $x_0$ to destination $x_n$. Given a list of optional refueling stations at positions $X = [x_1, \dots, x_n]$, return the minimum cost way for to fly from $x_0$ to $x_n$. It costs $([x_j - x_i] - l)^2$ to fly from airport $x_i$ to airport $x_j$ where $l$ is the optimal distance traveled for fuel efficiency reasons.
+> Suppose an airplane is flying from source $x_0$ to destination $x_n$. Given a list of optional refueling stations at positions $X = [x_1, \dots, x_n]$, return the minimum cost way to fly from $x_0$ to $x_n$ where it costs $([x_j - x_i] - l)^2$ to fly from airport $x_i$ to airport $x_j$ where $l$ is the optimal distance traveled for fuel efficiency reasons.
 >
 >
 > More specifically:
-> * Let $0 = x_0 < x_1 < \dots < x_{n-1} < x_n$ so that the source is at position $0$ and airports are in order of the miles away they are from the source.
+> * Let $0 = x_0 < x_1 < \dots < x_{n-1} < x_n$ so that the source is at position $0$ and the airports are sorted by their distance from the source.
 > * Assume the airports are located along a straight line such that distance between airport $x_j$ and airport $x_i$ is $x_i - x_j$.
 
 If the optional refueling airports are located at positions $X=[1, 5, 7, 10]$ and we prefer to travel $l=3$ miles at a time, the minimum cost of traveling from the source $x_0 = 0$ to $x_4 = 10$ is ?.
@@ -338,7 +342,7 @@ dp[j]
     \end{cases}
 $$
 
-where $w[i, j]$ is an $(n + 1) \times (n + 1)$ matrix defined as
+where $w[i, j]$ is an $n \times n$ matrix defined as
 
 $$
     w[i, j]
@@ -346,10 +350,9 @@ $$
     ([x_j - x_i] - l)^2.
 $$
 
-> INSERT EXPLANATION HERE.
+The cost $w[i, j]$ is the simply the cost of going from airport $x_i$ to airport $x_j$.
 
-
-## Putting it all together
+## Putting It All Together
 
 Let's take another look at our three reformatted recurrence relations:
 
@@ -434,13 +437,11 @@ dp[j]
     ([x_j - x_i] - l)^2
 $$
 
-These three recurrence relations are all the exact same, except for their cost matrices $w$. Interesting -- what does this mean?
-
-In 1985 two researchers Daniel Hirschberg and Lawrence Larmore noticed the same thing: numerous DP problems have identical recurrence relations and differ only in the cost matrix $w$. Could it be that many famous DP problems are the exact same except for the cost of transitioning from one item $x_i$ to another $x_j$? What a wild idea...
+These three recurrence relations are all the exact same, except for their cost matrices $w$. In 1985 two researchers Daniel Hirschberg and Lawrence Larmore noticed the very same thing: numerous DP problems have identical recurrence relations and differ only in the cost matrix $w$. Could it be that many famous DP problems are the exact same except for the cost of transitioning from one item $x_i$ to another $x_j$? What a wild idea...
 
 Take a closer look at this recurrence relation and we see a certain structure arise: given a sequence of items, this recurrence relation tries to find the subsequence of items which have the minimum weight or cost. For instance:
 
-* $\text{LIS}$ wants the longest subsequence of integers that is strictly increasing
+* $\text{LIS}$ wants the longest subsequence of integers that is strictly increasing (to find the shortest subsequence, we negate certain values)
 * $\text{CC}$ wants the smallest subsequence of coins that equal $n$ cents
 * $\text{AR}$ wants the cheapest subsequence of airports that allow us to fly from $x_0$ to $x_n$.
   
@@ -469,9 +470,9 @@ In this recurrence relation, $dp[j]$ is the cheapest way of getting to item $x_j
 
 Here is where the *subsequence* part of $\text{LWS}$ comes into play: to compute $dp[n]$, we first find the item $x_{i_1}$ with the minimum $dp[i_1] + w[i_1, n]$ value and include it in the our final answer's subsequence. Then to compute $dp[i_1]$ we find the next item $x_{i_2}$ that results in the minimum $dp[i_2] + w[i_2, i_1]$ value and include it in our final answer's subsequence. We repeat the pattern and end up with a subsequence of items $x_{i_1}, x_{i_2}, \dots$ that result in the minimum cost value for $dp[n]$. This subsequence $x_{i_1}, x_{i_2}, \dots$ is our least weight *subsequence*.
 
-Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Indeed, by defining the cost matrix $w$ carefully we can turn the general $\text{LWS}$ recurrence relation into the recurrence relation for the $\text{LIS}$, $\text{CC}$, and $\text{AR}$ problems! It seems that $\text{LWs}$ is some sort of fundamental problem and numerous problems are just $\text{LWS}$ problems in disguise.
+Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Indeed, by defining the cost matrix $w$ carefully we can turn the general $\text{LWS}$ recurrence relation into the recurrence relation for $\text{LIS}$, $\text{CC}$, or $\text{AR}$! There are many more problems that can be expressed through the $\text{LWS}$ recurrence relation. Indeed, $\text{LWS}$ appears to be some sort of fundamental problem in DP where numerous DP problems are simply $\text{LWS}$ problems in disguise.
 
-## Solving $\text{LWS}$ Faster:
+# Solving $\text{LWS}$ Faster
 
 Straightforward DP solves the $\text{LWS}$ problem in $O(n^2)$ time. This is because we have $n$ entries in our $dp$ table and each entry takes $O(n)$ time to compute. (Each entry iterates over $i$ where $0 \leq i < j$ and in the worst case $j$ equals $n$.) Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read the input, so a faster algorithm isn’t possible in general.
 
