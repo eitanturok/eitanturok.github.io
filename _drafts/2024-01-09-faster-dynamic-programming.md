@@ -8,15 +8,10 @@ categories: explain-paper dynamic-programming cs-theory algorithms complexity
 giscus_comments: true
 related_posts: true
 bibliography: 2018-12-22-distill.bib
-
 toc:
-  - name: Introduction
-  - name: $\text{LWS}$: Dynamic Programming in One Dimension
-    - name: Longest Increasing Subsequence Problem
-    - name: Coin Change Problem
-    - name: Airplane Refueling Problem
-    - name: Putting It All Together
-  - name: Solving $\text{LWS}$ Faster
+    - name: Introduction
+    - name: LWS, Dynamic Programming in One Dimension
+    - name: Solving LWS Faster
 ---
 
 # Introduction
@@ -45,7 +40,7 @@ This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how
 
 Let's dive in.
 
-# $\text{LWS}$: Dynamic Programming in One Dimension
+# LWS, Dynamic Programming in One Dimension
 
 When most students learn about DP they think it is all about filling in DP tables. This is not true! The most important part of DP is finding the recurrence relation -- a recursive equation that gives a solution for the problem in terms of simpler sub-problems. This is the heart of dynamic programming and thus a natural way to characterize different DP problems.
 
@@ -472,11 +467,30 @@ Here is where the *subsequence* part of $\text{LWS}$ comes into play: to compute
 
 Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w$, they can formulate many famous DP problems as instances of the $\text{LWS}$ problem. Indeed, by defining the cost matrix $w$ carefully we can turn the general $\text{LWS}$ recurrence relation into the recurrence relation for $\text{LIS}$, $\text{CC}$, or $\text{AR}$! There are many more problems that can be expressed through the $\text{LWS}$ recurrence relation. Indeed, $\text{LWS}$ appears to be some sort of fundamental problem in DP where numerous DP problems are simply $\text{LWS}$ problems in disguise.
 
-# Solving $\text{LWS}$ Faster
+# Solving LWS Faster
 
-Straightforward DP solves the $\text{LWS}$ problem in $O(n^2)$ time. This is because we have $n$ entries in our $dp$ table and each entry takes $O(n)$ time to compute. (Each entry iterates over $i$ where $0 \leq i < j$ and in the worst case $j$ equals $n$.) Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read the input, so a faster algorithm isn’t possible in general.
+Straightforward DP solves the $\text{LWS}$ problem in $O(n^2)$ time. This is because we have $n$ entries in our $dp$ table and each entry takes $O(n)$ time to compute so we have to do a total of $n \cdot O(n) = O(n^2)$ computations. (We know it takes $O(n)$ time to compute each entry in the dp table because in each entry we iterate over $i$ where $0 \leq i < j$ and in the worst case $j$ equals $n$ and so $0 \leq i < n$ means we loop over $O(n)$ values.)
+
+Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read the input, so a faster algorithm isn’t possible in general.
 
 However, in 2017 three researchers from UC San Diego -- Marvin Künnemann, Ramamohan Paturi, and Stefan Schneider -- challenged this assumption. They noticed that if one can input $w$ in a more compact form, perhaps a faster algorithm would be possible. Künnemann et al. focused on the case where $w$ is a low-rank matrix.
+
+<details>
+
+<summary>Refresher: What is a low-rank matrix? </summary>
+
+I'll tell you what a low rank matrix is!
+</details>
+
+
+If $w$ has rank $r < n^{o(1)}$, then instead of directly inputting $w$ into $\text{LWS}$, we can input the matrices $A, B \in \mathbb{R}^{n \times r}$ into $\text{LWS}$ where $w = A \times B^T$. The input size of the problem goes from $n^2$ to $n^{1 + o(1)}$. With a much smaller input size, we now have a hope of coming up with a faster algorithm for $\text{LWS}$. (For the informal reader, $o(1)$ in this context means some constant less than $1$.)
+
+Once Künnemann et al. come up with the clever idea of compressing $w$ by expressing it as a low rank matrix, they take it a step further. They use techniques from fine-grained complexity to show that when $w$ is low-rank, you can actually solve $\text{LWS}$ in $O(n^{2 - 1/r})$ time, a polynomial speedup over the standard $O(n^2)$ runtime of $\text{LWS}$!
+
+
+this problem reduces to the minimum inner product $\text{Min-IP}$ problem:
+
+
 
 
 If you sort the LWS problem, it becomes low rank!
