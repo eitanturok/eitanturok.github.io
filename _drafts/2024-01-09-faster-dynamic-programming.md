@@ -473,7 +473,9 @@ Straightforward DP solves the $\text{LWS}$ problem in $O(n^2)$ time. This is bec
 
 Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read the input, so a faster algorithm isn’t possible in general.
 
-However, in 2017 three researchers from UC San Diego -- Marvin Künnemann, Ramamohan Paturi, and Stefan Schneider -- challenged this assumption. They noticed that if one can input $w$ in a more compact form, perhaps a faster algorithm would be possible. Künnemann et al. focused on the case where $w$ is a low-rank matrix.
+However, in 2017 three researchers from UC San Diego -- Marvin Künnemann, Ramamohan Paturi, and Stefan Schneider -- challenged this assumption. They noticed that if one can input $w$ in a more compact form, perhaps a faster algorithm would be possible.
+
+Künnemann et al. focused on the case where $w$ is a low-rank matrix.
 
 <details>
 
@@ -482,8 +484,8 @@ However, in 2017 three researchers from UC San Diego -- Marvin Künnemann, Ramam
 I'll tell you what a low rank matrix is!
 </details>
 
+If the cost matrix $w$ has rank $r < n^{o(1)}$, then instead of directly inputting $w$ into $\text{LWS}$, we can input the matrices $A, B \in \mathbb{R}^{n \times r}$ into $\text{LWS}$ where $w = A \times B^T$. This reduces the input size of the problem from $n^2$ to $n^{1 + o(1)}$. With a much smaller input size, we now have a hope of coming up with a faster algorithm for $\text{LWS}$. (For the informal reader, $o(1)$ in this context means some constant less than $1$.)
 
-If $w$ has rank $r < n^{o(1)}$, then instead of directly inputting $w$ into $\text{LWS}$, we can input the matrices $A, B \in \mathbb{R}^{n \times r}$ into $\text{LWS}$ where $w = A \times B^T$. The input size of the problem goes from $n^2$ to $n^{1 + o(1)}$. With a much smaller input size, we now have a hope of coming up with a faster algorithm for $\text{LWS}$. (For the informal reader, $o(1)$ in this context means some constant less than $1$.)
 
 Once Künnemann et al. come up with the clever idea of compressing $w$ by expressing it as a low rank matrix, they take it a step further. They use techniques from fine-grained complexity to show that when $w$ is low-rank, you can actually solve $\text{LWS}$ in $O(n^{2 - 1/r})$ time, a polynomial speedup over the standard $O(n^2)$ runtime of $\text{LWS}$!
 
