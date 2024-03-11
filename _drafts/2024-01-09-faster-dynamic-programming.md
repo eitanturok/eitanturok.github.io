@@ -469,9 +469,7 @@ Hirschberg and Lawrence noticed that by appropriately setting the cost matrix $w
 
 # Solving LWS Faster
 
-Straightforward DP solves the $\text{LWS}$ problem in $O(n^2)$ time. This is because we have $n$ entries in our $dp$ table and each entry takes $O(n)$ time to compute so we have to do a total of $n \cdot O(n) = O(n^2)$ computations. (We know it takes $O(n)$ time to compute each entry in the dp table because in each entry we iterate over $i$ where $0 \leq i < j$ and in the worst case $j$ equals $n$ and so $0 \leq i < n$ means we loop over $O(n)$ values.)
-
-Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read the input, so a faster algorithm isn’t possible in general.
+Straightforward DP solves the $\text{LWS}$ problem in $O(n^2)$ time. This is because we have $n$ entries in our $dp$ table and each entry takes $O(n)$ time to compute so we have to do a total of $n \cdot O(n) = O(n^2)$ computations. (We know it takes $O(n)$ time to compute each entry in the dp table because in each entry we iterate over $i$ where $0 \leq i < j$ and in the worst case $j$ equals $n$ and so $0 \leq i < n$ means we loop over $O(n)$ values.) Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read the input, so a faster algorithm isn’t possible in general.
 
 However, in 2017 three researchers from UC San Diego -- Marvin Künnemann, Ramamohan Paturi, and Stefan Schneider -- challenged this assumption. They noticed that if one can input $w$ in a more compact form, perhaps a faster algorithm would be possible.
 
