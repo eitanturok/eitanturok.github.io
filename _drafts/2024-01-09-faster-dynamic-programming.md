@@ -79,7 +79,7 @@ where $dp[j]$ is the $\text{LIS}$ of $x_1, \dots, x_j$ and $\mathbb{1}[x_j > x_i
 
 **Base Case $j == 0$:**
 
-In the base case, we return zero when $j == 0$ because our sequence starts at $x_1$ and being at $x_0$ is out of bounds. So $dp[0]$ is undefined and the $\text{LIS}$ must have a length of zero.
+Using the above definition of $dp[j]$, $dp[0]$ is the $\text{LIS}$ of $x_1, \dots, x_0$. However, our sequence starts at $x_1$, not $x_0$; our sequence $x_1, \dots, x_0$ is undefined. The $\text{LIS}$ of this sequence is non-existent and so the length of this $\text{LIS}$ must be zero. Thus, $dp[j] == 0$.
 
 **Otherwise:**
 
@@ -191,7 +191,7 @@ The minimum number of coins needed to make a negative number of cents, i.e. $j <
 
 **Otherwise:**
 
-Here, we want to find $dp[j]$, the minimum number of coins needed to make $j$ cents. To do so, imagine we select a coin worth $c_i$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c_i$ cents, i.e. we need to know $dp[j-c_i]$. We add the $+1$ because by using the coin $c_i$, we've increased the number of coins we've used by one.
+Here, we want to find $dp[j]$, the minimum number of coins needed to make $j$ cents. So imagine we select a coin worth $c_i$ cents. Then we need to know the minimum number of coins needed to make the remaining $j-c_i$ cents, i.e. we need to know $dp[j-c_i]$. We add the $+1$ because by using the coin $c_i$, we've increased the number of coins we've used by one.
 
 ### Reformat the Recurrence Relation
 
