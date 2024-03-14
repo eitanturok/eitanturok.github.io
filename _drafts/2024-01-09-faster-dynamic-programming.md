@@ -436,7 +436,7 @@ These three recurrence relations are all the exact same, except for their cost m
 
 In 1985 two researchers Daniel Hirschberg and Lawrence Larmore noticed the very same thing: numerous DP problems have identical recurrence relations and differ only in the cost matrix $w$. Could it be that many famous DP problems are the exact same except for $w[i, j]$, the cost of transitioning from one item $x_i$ to another $x_j$?
 
-Hirschberg and Larmore noticed that this recurrence relation has a fundamental structure: given a sequence of items, this recurrence relation tries to find the *subsequence* of items which have the *minimum weight*. For instance:
+Hirschberg and Larmore noticed that this recurrence relation has a fundamental structure: given a sequence of items, this recurrence relation tries to find the *subsequence* of items which have the *minimum weight* when traversing the cost matrix $w$ across our recursive calls. For instance:
 
 * $\text{LIS}$ wants the longest subsequence of integers that is strictly increasing.
 * $\text{CC}$ wants the smallest subsequence of coins that equal $n$ cents.
@@ -463,7 +463,7 @@ dp[j]
     \end{cases}
 $$
 
-In this recurrence relation, $dp[j]$ is the cheapest way of "getting" to item $x_j$. To compute $dp[j]$ we find the minimum over all previously computed values ($dp[i]$) plus the cost of transitioning from item $x_j$ to item $x_i$ ($w[i, j]$).
+In this recurrence relation, $dp[j]$ is the cheapest way of "getting" to item $x_j$. To compute $dp[j]$ we find the minimum over all previously computed values ($dp[i]$) plus the cost of transitioning from item $x_i$ to item $x_j$ ($w[i, j]$).
 
 Here is where the *subsequence* part of $\text{LWS}$ comes into play: to compute $dp[n]$, we first find the item $x_{i_1}$ with the minimum $dp[i_1] + w[i_1, n]$ value and include it in the our final answer's subsequence. Then to compute $dp[i_1]$ we find the next item $x_{i_2}$ that results in the minimum $dp[i_2] + w[i_2, i_1]$ value and include it in our final answer's subsequence. We repeat the pattern and end up with a subsequence of items $x_{i_1}, x_{i_2}, \dots$ that result in the minimum cost value for $dp[n]$. This subsequence $x_{i_1}, x_{i_2}, \dots$ is our least weight *subsequence*.
 
