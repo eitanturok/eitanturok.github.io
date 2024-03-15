@@ -471,23 +471,27 @@ Taking a step back, Hirschberg and Larmore noticed that by appropriately setting
 
 # Solving LWS Faster
 
-Straightforward DP solves the $\text{LWS}$ problem in $O(n^2)$ time. This is because we have $n$ entries in our $dp$ table and each entry takes $O(n)$ time to compute so we have to do a total of $n \cdot O(n) = O(n^2)$ computations. (We know it takes $O(n)$ time to compute each entry in the dp table because in each entry we iterate over $i$ where $0 \leq i < j$ and in the worst case $j$ equals $n$ and so $0 \leq i < n$ means we loop over $O(n)$ values.) Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read the input, so a faster algorithm isn’t possible in general.
+The straightforward DP algorithm solves $\text{LWS}$ problem in $O(n^2)$ time. This is because we have $n$ entries in our $dp$ table (remember, we are solving for $dp[n]$) and each entry takes $O(n)$ time to compute (each entry takes the minimum over $0 \leq i < j$ and in the worst case $j == n$ so we loop over $O(n)$ values). So to solve $\text{LWS}$, we must do $n \cdot O(n) = O(n^2)$ computations. Moreover, since the cost matrix $w$ has $n^2$ entries, it requires quadratic time to read in the input, so a faster algorithm isn’t possible in general.
 
 However, in 2017 three researchers from UC San Diego -- Marvin Künnemann, Ramamohan Paturi, and Stefan Schneider -- challenged this assumption. They noticed that if one can input $w$ in a more compact form, perhaps a faster algorithm would be possible.
-
-Künnemann et al. focused on the case where $w$ is a low-rank matrix.
 
 <details>
 
 <summary>Refresher: What is a low-rank matrix? </summary>
 
-I'll tell you what a low rank matrix is!
+A matrix is low rank if it has redundant information and can be represented more compactly by a combination of a few core, underlying patterns. 
+
+Formally, a matrix $C \in \mathbb{R}^{n \times n}$ is low rank if $C = A \times B^T$ where $A,B \in \mathbb{R}^{n \times r}$ and the rank $r << n$. Matrix $C$ has $n^2$ entries but it can be represented by the multiplication of matrices $A,B$ which have a total of $2 n \times r$ elements; together $A,B$ have way fewer elements than $C$ because $2 n \times r << n^2$.  Intuitively, we are exploiting the structure in matrix $C$ and "compressing" it into a series of interactions between two smaller matrices $A,B$.
+
+Low-rank matrices often appear in real-world applications where there is redundant information or a simpler structure is at play.
+
 </details>
 
-If the cost matrix $w$ has rank $r < n^{o(1)}$, then instead of directly inputting $w$ into $\text{LWS}$, we can input the matrices $A, B \in \mathbb{R}^{n \times r}$ into $\text{LWS}$ where $w = A \times B^T$. This reduces the input size of the problem from $n^2$ to $n^{1 + o(1)}$. With a much smaller input size, we now have a hope of coming up with a faster algorithm for $\text{LWS}$. (For the informal reader, $o(1)$ in this context means some constant less than $1$.)
+Künnemann et al. focused on the case where the cost matrix $w$ is a low-rank matrix. If the cost matrix $w$ has rank $r < n^{o(1)}$, then instead of directly inputting $w$ into $\text{LWS}$, we can input the $n \times r$ matrices $A, B$ into $\text{LWS}$ where $w = A \times B^T$. This reduces the input size of the problem from $n^2$ to $n^{1 + o(1)}$. With a much smaller input size, it is now possible to maybe come up with a faster algorithm for $\text{LWS}$. (For the informal reader, $o(1)$ in this context means some constant less than $1$.)
 
+Do any of our $\text{LWS}$ problems have a low-rank $w$? Think for yourself.
 
-Once Künnemann et al. come up with the clever idea of compressing $w$ by expressing it as a low rank matrix, they take it a step further. They use techniques from fine-grained complexity to show that when $w$ is low-rank, you can actually solve $\text{LWS}$ in $O(n^{2 - 1/r})$ time, a polynomial speedup over the standard $O(n^2)$ runtime of $\text{LWS}$!
+Assuming $w$ is low-rank, Künnemann et al. show that you can solve $\text{LWS}$ in $O(n^{2 - 1/r})$ time, a polynomial speedup over the standard $O(n^2)$ runtime of $\text{LWS}$!
 
 
 this problem reduces to the minimum inner product $\text{Min-IP}$ problem:
