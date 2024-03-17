@@ -54,7 +54,7 @@ To begin, let's find the recurrence relation for the [longest increasing subsequ
 
 > Given an integer array $X = [x_1, \dots, x_n]$, return the length of the longest strictly increasing subsequence in this array.
 
-If our array is $[10,9,2,5,3,7,101,18]$, our $\text{LIS}$ is $[2,3,7,101]$. So we'd return $4$.
+If our array is $X = [10,9,2,5,3,7,101,18]$, our $\text{LIS}$ is $[2,3,7,101]$. So we'd return $4$.
 
 ### Recurrence Relation
 
@@ -298,7 +298,7 @@ When $j == 0$, we are located at airport $x_0$ and it costs $0$ to go from sourc
 
 **Otherwise:**
 
-To compute $dp[j]$, the cheapest way of flying from $x_0$ to $x_j$, we take the cheapest combination of 
+To compute $dp[j]$, the cheapest way of flying from $x_0$ to $x_j$, we take the cheapest combination of
 * the cost of flying from $x_i$ to $x_j$, $([x_j - x_i] - l)^2$
 * plus the cheapest possible cost of flying from $x_0$ to $x_i$, $dp[i]$.
 
@@ -365,7 +365,7 @@ dp[j]
         \text{otherwise.}
         \\
     \end{cases}
-    \ \ \ \ \ \ \ \ 
+    \ \ \ \ \ \ \ \
     \text{ where }
     w[i, j]
     =
@@ -395,7 +395,7 @@ dp[j]
         \text{otherwise.}
         \\
     \end{cases}
-    \ \ \ \ \ \ \ \ 
+    \ \ \ \ \ \ \ \
     \text{ where }
     w[i, j]
     =
@@ -425,7 +425,7 @@ dp[j]
         \text{otherwise.}
         \\
     \end{cases}
-    \ \ \ \ \ \ \ \ 
+    \ \ \ \ \ \ \ \
     \text{ where }
     w[i, j]
     =
@@ -441,7 +441,7 @@ Hirschberg and Larmore noticed that this recurrence relation has a fundamental s
 * $\text{LIS}$ wants the longest subsequence of integers that is strictly increasing.
 * $\text{CC}$ wants the smallest subsequence of coins that equal $n$ cents.
 * $\text{AR}$ wants the cheapest subsequence of airports that allow us to fly from our source to our destination.
-  
+
 All of these DP problems want to find the minimum weight subsequence of items. Hirschberg and Larmore thus named this DP problem the *least weight subsequence* problem or $\text{LWS}$.
 
 Formally, $\text{LWS}$ is defined as follows:
@@ -479,7 +479,7 @@ However, in 2017 three researchers from UC San Diego -- Marvin Künnemann, Ramam
 
 <summary>Refresher: What is a low-rank matrix? </summary>
 
-A matrix is low rank if it has redundant information and can be represented more compactly by a combination of a few core, underlying patterns. 
+A matrix is low rank if it has redundant information and can be represented more compactly by a combination of a few core, underlying patterns.
 
 Formally, a matrix $C \in \mathbb{R}^{n \times n}$ is low rank if $C = A \times B^T$ where $A,B \in \mathbb{R}^{n \times r}$ and the rank $r << n$. Matrix $C$ has $n^2$ entries but it can be represented by the multiplication of matrices $A,B$ which have a total of $2 n \times r$ elements; together $A,B$ have way fewer elements than $C$ because $2 n \times r << n^2$.  Intuitively, we are exploiting the structure in matrix $C$ and "compressing" it into a series of interactions between two smaller matrices $A,B$.
 
@@ -489,7 +489,46 @@ Low-rank matrices often appear in real-world applications where there is redunda
 
 Künnemann et al. focused on the case where the cost matrix $w$ is a low-rank matrix. If the cost matrix $w$ has rank $r < n^{o(1)}$, then instead of directly inputting $w$ into $\text{LWS}$, we can input the $n \times r$ matrices $A, B$ into $\text{LWS}$ where $w = A \times B^T$. This reduces the input size of the problem from $n^2$ to $n^{1 + o(1)}$. With a much smaller input size, it is now possible to maybe come up with a faster algorithm for $\text{LWS}$. (For the informal reader, $o(1)$ in this context means some constant less than $1$.)
 
-Do any of our $\text{LWS}$ problems have a low-rank $w$? Think for yourself.
+Can we solve any of our $\text{LWS}$ problems faster by exploiting their low-rank cost matrix $w$?
+
+### $\text{LIS}$
+
+Consider the array $X = [2, 10, 5, 4]$ where our $\text{LIS}$ is $[2, 5]$ or $[2, 4]$. Here, we'd return $2$, the length of these two $\text{LIS's}$. Recall that the cost matrix $w$ for $\text{LIS}$ is defined as:
+
+$$
+w[i, j]
+    =
+    \begin{cases}
+        -1
+        &
+        \text{if $x_j > x_i$}
+        \\
+        0
+        &
+        \text{otherwise.}
+        \\
+    \end{cases}
+$$
+
+In English, this means we place a $-1$ at $w[i, j]$ if $x_j > x_i$ else we place a $0$ there. Recall that $w$ is a zero-indexed matrix where $i$ determines one's position on the $y\text{-axis}$ and $j$ determines one's position on the $x\text{-axis}$. In this example,
+
+$$
+w
+=
+\begin{bmatrix}
+    0 & -1 & -1 & -1 \\
+    0 & 0 & 0 & 0 \\
+    0 & -1 & 0 & 0 \\
+    1 & 0 & 0 & 0 \\
+\end{bmatrix}
+$$
+
+Let's analyze the first row ($i=0$) where $x_i = x_0 = 2$. In column $j=0$ we write a $0$ because $i == j$ and so $x_j = x_i$. In column $j=1$, $x_j > x_i$ becomes $x_1 > x_0$ which equals $10 > 2$, the $0\text{-th}$ and $1\text{st}$ values of $X$ respectively; the inequality is satisfied and we write a $-1$ there.
+
+The first row ($i=0$) has $x_i = x_0 = 2$ and the inequality $x_j > x_i$ becomes $x_j > 2$. Since $2$ is the smallest number in $X$, $x_j > 2$ is satisfied for all other numbers in $X$, i.e. when $j \in \{1, 2, 3\}$, and so we place a $-1$ in the columns $1, 2, 3$. When $j = 0$, $i,j$ both equal $0$ and $x_i,x_j$ have the same value. So the inequality $x_j > x_i$ is not satisfied and we place a $0$ in column $0$.
+
+The second row ($i=1$) has $x_i = x_1 = 10$. All numbers in $X$ are *smaller* than $10$ and so the inequality $x_j > 10$ *never* holds and we put all zeros there.
+
 
 Assuming $w$ is low-rank, Künnemann et al. show that you can solve $\text{LWS}$ in $O(n^{2 - 1/r})$ time, a polynomial speedup over the standard $O(n^2)$ runtime of $\text{LWS}$!
 
