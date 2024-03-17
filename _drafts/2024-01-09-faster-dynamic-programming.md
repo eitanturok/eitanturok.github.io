@@ -529,7 +529,7 @@ The second row ($i=1$) has $x_i = x_1 = 4$ and the inequality $x_j > x_i$ become
 In this particular example, the cost matrix $w$ *is* a low-rank matrix:
 
 $$
-w
+wdoc
 =
 \begin{bmatrix}
     0 & 0 & 0
