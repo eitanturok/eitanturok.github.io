@@ -532,20 +532,27 @@ $$
 w
 =
 \begin{bmatrix}
-    0 & 0 & 0 \\
-    -1 & 0 & -1 \\
-    0 & 0 & 0 \\
-\end{bmatrix}_{n \times n}
+    0 & 0 & 0
+    \\
+    -1 & 0 & -1
+    \\
+    0 & 0 & 0
+    \\
+\end{bmatrix}^{n \times n}
 =
 \begin{bmatrix}
-    0 \\
-    1 \\
-    0 \\
-\end{bmatrix}_{n \times r}
+    0
+    \\
+    1
+    \\
+    0
+    \\
+\end{bmatrix}^{n \times r}
 \times
 \begin{bmatrix}
-    -1 & 0 & -1 \\
-\end{bmatrix}_{r \times n}
+    -1 & 0 & -1
+    \\
+\end{bmatrix}^{r \times n}
 $$
 
 Here, $w$ has rank $r = 1$, meaning $w$ can be represented more compactly: the input size is reduced from $9$ elements to $6$ elements. instead is possible to solve this $\text{LIS}$ problem faster!
