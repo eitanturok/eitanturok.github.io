@@ -26,17 +26,17 @@ So, we wonder:
 
 > For which problems can we achieve a polynomial speedup over the standard DP algorithm? And when is the standard DP algorithm already optimal?
 
-In our [latest work](https://arxiv.org/abs/2309.04683), we provide an answer to this question for certain kinds of DP problems, specifically for $k$-dimensional Least Weight Subsequence ($k\text{D}\hspace{1mm}\text{LWS}$) DP problems.
+In our [latest work](https://arxiv.org/abs/2309.04683), we provide an answer to this question for certain kinds of DP problems, specifically for $k$-dimensional Least Weight Subsequence ($$k\text{D}\hspace{1mm}\text{LWS}$$) DP problems.
 
-We prove that achieving a polynomial speedup for $k\text{D}\hspace{1mm}\text{LWS}$ depends on the cost of transitioning from one DP state to another. This cost is expressed as a matrix in two dimensions or, analogously, a tensor in higher dimensions. If this cost tensor has constant rank, then it *is possible* to achieve a polynomial speedup. But if the rank is slightly greater than constant, a polynomial speedup *is impossible* (assuming $\text{SETH}$).
+We prove that achieving a polynomial speedup for $$k\text{D}\hspace{1mm}\text{LWS}$$ depends on the cost of transitioning from one DP state to another. This cost is expressed as a matrix in two dimensions or, analogously, a tensor in higher dimensions. If this cost tensor has constant rank, then it *is possible* to achieve a polynomial speedup. But if the rank is slightly greater than constant, a polynomial speedup *is impossible* (assuming $\text{SETH}$).
 
 This is a beautiful result: if the cost tensor has a simple structure, i.e. constant rank, we can exploit it to solve the problem faster. But once the cost tensor becomes slightly more complex, i.e. super-constant rank, there is a naturally occurring barrier that makes it impossible to solve the problem any faster. This suggests there is some inherent difference between a constant and super-constant rank, a fundamental transition point where the computation goes from fast to slow.
 
 Informally, our main result is:
 
-> For $k\text{D}\hspace{1mm}\text{LWS}$ DP problems, we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
+> For $$k\text{D}\hspace{1mm}\text{LWS}$$ DP problems, we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $O(1)$ but impossible when it is $2^{O(\log^* n)}$ or greater (assuming $\text{SETH}$).
 
-This post explains what the $k\text{D}\hspace{1mm}\text{LWS}$ DP problem is, how we proved these results, and the problems that we can now solve faster.
+This post explains what the $$k\text{D}\hspace{1mm}\text{LWS}$$ DP problem is, how we proved these results, and the problems that we can now solve faster.
 
 Let's dive in.
 
@@ -44,7 +44,7 @@ Let's dive in.
 
 When most students learn about DP they think it is all about filling in DP tables. This is not true! The most important part of DP is finding the recurrence relation -- a recursive equation that gives a solution for the problem in terms of simpler sub-problems. This is the heart of dynamic programming and thus a natural way to characterize different DP problems.
 
-$k\text{D}\hspace{1mm}\text{LWS}$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $k\text{D}\hspace{1mm}\text{LWS}$, we will first focus on the one dimensional version of $k\text{D}\hspace{1mm}\text{LWS}$: $\text{LWS}$. In this section we will analyze the recurrence relations of three different DP problems and create a general recurrence relation that captures all of these problems -- this will be the $\text{LWS}$ recurrence relation!
+$$k\text{D}\hspace{1mm}\text{LWS}$$ is a class of DP problems with a certain kind of recurrence relation. To develop a working intuition of $$k\text{D}\hspace{1mm}\text{LWS}$$, we will first focus on the one dimensional version of $$k\text{D}\hspace{1mm}\text{LWS}$$: $\text{LWS}$. In this section we will analyze the recurrence relations of three different DP problems and create a general recurrence relation that captures all of these problems -- this will be the $\text{LWS}$ recurrence relation!
 
 ## Longest Increasing Subsequence Problem
 
@@ -54,7 +54,7 @@ To begin, let's find the recurrence relation for the [longest increasing subsequ
 
 > Given an integer array $X = [x_1, \dots, x_n]$, return the length of the longest strictly increasing subsequence in this array.
 
-If our array is $X = [10,9,2,5,3,7,101,18]$, our $\text{LIS}$ is $[2,3,7,101]$. So we'd return $4$.
+If our array is $X = [10,9,2,5,3,7,101,18]$, our $\text{LIS}$ is $[2,3,7,101]$. This is the longest possible subsequence of integers from $X$ where each element is greater than the next, i.e. where the subsequence is strictly increasing. We return $4$ here because that is the length of our $\text{LIS}$ $[2,3,7,101]$.
 
 ### Recurrence Relation
 
@@ -578,12 +578,12 @@ this problem reduces to the minimum inner product $\text{Min-IP}$ problem:
 
 If you sort the LWS problem, it becomes low rank!
 
-# What is $k\text{D}\hspace{1mm}\text{LWS}$?
+# What is $$k\text{D}\hspace{1mm}\text{LWS}$$?
 
 ## Grid Airplane Refueling Problem
 
 <!--
-We prove that for $k\text{D}\hspace{1mm}\text{LWS}$ problems a polynomial speedup is possible whenever the cost to transition from one DP state to another is constant. The moment the cost to go from one DP state to another becomes slightly super-constant, it is impossible to achieve a polynomial speedup. -->
+We prove that for $$k\text{D}\hspace{1mm}\text{LWS}$$ problems a polynomial speedup is possible whenever the cost to transition from one DP state to another is constant. The moment the cost to go from one DP state to another becomes slightly super-constant, it is impossible to achieve a polynomial speedup. -->
 
 ## APSP
 
