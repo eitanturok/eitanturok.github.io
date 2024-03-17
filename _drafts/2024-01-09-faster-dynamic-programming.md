@@ -510,7 +510,7 @@ w[i, j]
     \end{cases}
 $$
 
-In English, this means we place a $-1$ at position $[i, j]$ of $w$ if $x_j > x_i$ else we place a $0$ there. Recall that $w$ is a zero-indexed matrix where $i$ determines one's position on the $y\text{-axis}$ and $j$ determines one's position on the $x\text{-axis}$. In this example,
+In English, this means we place a $-1$ at position $[i, j]$ of the cost matrix if $x_j > x_i$; else we place a $0$ there. Recall that $w$ is a zero-indexed matrix where $i$ determines one's position on the $y\text{-axis}$ and $j$ determines one's position on the $x\text{-axis}$. In this example,
 
 $$
 w
@@ -555,8 +555,16 @@ w
 \end{bmatrix}^{r \times n}
 $$
 
-Here, $w$ has rank $r = 1$, meaning $w$ can be represented more compactly: the input size is reduced from $9$ elements to $6$ elements. instead is possible to solve this $\text{LIS}$ problem faster!
+Here, $w$ has rank $r = 1$, meaning $w$ can be represented more compactly: the input size is reduced from $9$ elements to $6$ elements! Moreover, because the cost matrix $w$ is low-rank, it is possible to solve this $\text{LIS}$ problem faster than the straightforward DP algorithm.
 
+However, $w$ being low-rank depends on the particular values of $X$. In general, this problem cannot be considered low-rank.
+
+> Explain more why this is not in general a low-rank matrix. Specifically, we are interested in low-rank matrices that have constant rank, a rank that does not depend on $n$.
+
+
+### Coin Change
+
+Consider the array,
 
 
 
