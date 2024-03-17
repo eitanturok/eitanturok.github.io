@@ -493,7 +493,7 @@ Can we solve any of our $\text{LWS}$ problems faster by exploiting their low-ran
 
 ### $\text{LIS}$
 
-Consider the array $X = [2, 10, 5, 4]$ where our $\text{LIS}$ is $[2, 5]$ or $[2, 4]$. Here, we'd return $2$, the length of these two $\text{LIS's}$. Recall that the cost matrix $w$ for $\text{LIS}$ is defined as:
+Consider the array $X = [2, 10, 4]$ where our $\text{LIS}$ is $[2, 4]$ and so we'd return $2$, the length of this $\text{LIS}$. Recall that the cost matrix $w$ for $\text{LIS}$ is defined as:
 
 $$
 w[i, j]
@@ -510,24 +510,77 @@ w[i, j]
     \end{cases}
 $$
 
-In English, this means we place a $-1$ at $w[i, j]$ if $x_j > x_i$ else we place a $0$ there. Recall that $w$ is a zero-indexed matrix where $i$ determines one's position on the $y\text{-axis}$ and $j$ determines one's position on the $x\text{-axis}$. In this example,
+In English, this means we place a $-1$ at position $[i, j]$ of $w$ if $x_j > x_i$ else we place a $0$ there. Recall that $w$ is a zero-indexed matrix where $i$ determines one's position on the $y\text{-axis}$ and $j$ determines one's position on the $x\text{-axis}$. In this example,
 
 $$
 w
 =
 \begin{bmatrix}
-    0 & -1 & -1 & -1 \\
-    0 & 0 & 0 & 0 \\
-    0 & -1 & 0 & 0 \\
-    1 & 0 & 0 & 0 \\
+    0 & -1 & -1 \\
+    0 & 0 & 0 \\
+    0 & -1 & 0 \\
 \end{bmatrix}
 $$
 
-Let's analyze the first row ($i=0$) where $x_i = x_0 = 2$. In column $j=0$ we write a $0$ because $i == j$ and so $x_j = x_i$. In column $j=1$, $x_j > x_i$ becomes $x_1 > x_0$ which equals $10 > 2$, the $0\text{-th}$ and $1\text{st}$ values of $X$ respectively; the inequality is satisfied and we write a $-1$ there.
+The first row ($i=0$) has $x_i = x_0 = 2$ and the inequality $x_j > x_i$ becomes $x_j > 2$. Since $2$ is the smallest number in $X = [2, 10, 4]$, $x_j > 2$ is satisfied for all other numbers in $X$ and so we place a $-1$ in the columns $1, 2$. When $j = 0$, $i,j$ both equal $0$ and $x_i,x_j$ have the same value. So the inequality $x_j > x_i$ is *not* satisfied and we place a $0$ in column $0$.
 
-The first row ($i=0$) has $x_i = x_0 = 2$ and the inequality $x_j > x_i$ becomes $x_j > 2$. Since $2$ is the smallest number in $X$, $x_j > 2$ is satisfied for all other numbers in $X$, i.e. when $j \in \{1, 2, 3\}$, and so we place a $-1$ in the columns $1, 2, 3$. When $j = 0$, $i,j$ both equal $0$ and $x_i,x_j$ have the same value. So the inequality $x_j > x_i$ is not satisfied and we place a $0$ in column $0$.
+The second row ($i=1$) has $x_i = x_1 = 10$ and the inequality $x_j > x_i$ becomes $x_j > 10$. All numbers in  $X = [2, 10, 4]$ are *not* greater than $10$ and so the inequality $x_j > 10$ *never* holds and we put zeros in the columns $0, 1, 2$.
 
-The second row ($i=1$) has $x_i = x_1 = 10$. All numbers in $X$ are *smaller* than $10$ and so the inequality $x_j > 10$ *never* holds and we put all zeros there.
+The third row ($i=2$) has $x_i = x_2 = 4$ and the inequality $x_j > x_i$ becomes $x_j > 4$. This inequality is true when $j = 0$ because $x_0 > x_2$ becomes $2 > 4$ so we place a $-1$ in column $0$. This inequality is *not* true when $j = 1$ because $x_1 > x_2$ becomes $10 > 4$ which is false and so we place a $0$ in column $1$.
+
+In this particular example, the cost matrix $w$ *is* a low-rank matrix:
+
+$$
+w
+=
+\begin{bmatrix}
+    0 & -1 & -1 \\
+    0 & 0 & 0 \\
+    0 & -1 & 0 \\
+\end{bmatrix}_{n \times n}
+=
+\begin{bmatrix}
+    0 & 0 \\
+    1 & 1 \\
+    1 & 0 \\
+\end{bmatrix}_{n \times r}
+\times
+\begin{bmatrix}
+    0 & -1 & 0 \\
+    0 & 0 & -1 \\
+\end{bmatrix}_{r \times n}
+$$
+
+Here, we have rank $r = 2$, meaning $w$ can be represented more compactly: the input size is reduced from $9$ elements to $6$ this problem contains 6 elements, instead is possible to solve this $\text{LIS}$ problem faster!
+
+
+
+
+When $X = [7, 4, 7]$, the $\text{LIS}$ is $[4, 7]$ which has length $2$.
+$$
+w
+=
+\begin{bmatrix}
+    0 & 0 & 0 \\
+    -1 & 0 & -1 \\
+    0 & 0 & 0 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+    0 \\
+    1 \\
+    0 \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+    -1 & 0 & -1 \\
+\end{bmatrix}
+$$
+
+
+$x_j > x_i$
+
+
 
 
 Assuming $w$ is low-rank, Künnemann et al. show that you can solve $\text{LWS}$ in $O(n^{2 - 1/r})$ time, a polynomial speedup over the standard $O(n^2)$ runtime of $\text{LWS}$!
