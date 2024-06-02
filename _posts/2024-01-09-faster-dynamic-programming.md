@@ -2,7 +2,7 @@
 layout: distill
 title: Can You Solve Dynamic Programming Problems Faster?
 date: 2024-01-09 11:59:00-0400
-description: We prove you can solve dynamic programming problems *polynomially* faster if you have a simple cost function.
+description: We prove you can solve dynamic programming problems polynomially faster if you have a simple cost function.
 tags: comments
 categories: explain-paper dynamic-programming cs-theory algorithms complexity
 giscus_comments: true
@@ -185,7 +185,7 @@ The minimum number of coins needed to make a negative number of cents, i.e. $$j 
 
 **Otherwise:**
 
-In this case we have need to make $$j$$ cents with our coins. So imagine we select a coin worth $$c_i$$ cents. Then we still need to find the minimum number of coins to make the remaining $$j-c_i$$ cents, i.e. we need to know $$dp[j-c_i]$$. We add the $$+1$$ because by using the coin $$c_i$$, we've increased the number of coins we've used by one.
+In this case we have need to make $$j$$ cents with our coins $C$. So imagine we select a coin worth $$c_i$$ cents. Then we only need to make another $$j-c_i$$ cents to make $$j$$ total cents. To find the minimum number of coins needed to make the remaining $$j-c_i$$ cents we simply need to know $$dp[j-c_i]$$. Our expression has a $$+1$$ because by using the coin $$c_i$$, we've increased the number of coins we've used by one, giving us $$dp[j-c_i] + 1$$.
 
 ### Reformat the Recurrence Relation
 
