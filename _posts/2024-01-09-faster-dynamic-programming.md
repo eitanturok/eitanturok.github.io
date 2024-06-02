@@ -79,13 +79,11 @@ where $$dp[j]$$ is the $$\text{LIS}$$ of $$x_1, \dots, x_j$$ and $$\mathbb{1}[x_
 
 **Base Case $$j == 0$$:**
 
-Using the formal definition of $$dp[j]$$ from above, $$dp[0]$$ is the $$\text{LIS}$$ of $$x_1, \dots, x_0$$. However, our sequence starts at $$x_1$$, not $$x_0$$ -- our sequence $$x_1, \dots, x_0$$ is undefined. The $$\text{LIS}$$ of this sequence is non-existent and so the length of this $$\text{LIS}$$ must be zero. Thus, $$dp[j] == 0$$.
+Since $$dp[j]$$ is defined as the $$\text{LIS}$$ of $$x_1, \dots, x_j$$, $$dp[0]$$ must be the $$\text{LIS}$$ of $$x_1, \dots, x_0$$. This sequence is undefined so we set the length of this $$\text{LIS}$$ to zero.
 
 **Otherwise:**
 
-Here $$j > 0$$, meaning we have one or more elements in our sequence $$x_1, \dots, x_j$$ for which we are computing the $$\text{LIS}$$. In this case, we use $$dp[i]$$, the already-computed $$\text{LIS}$$ values of a shorter sequence ($$x_1, \dots, x_i$$) to compute $$dp[j]$$, the $$\text{LIS}$$ of our longer sequence ($$x_1, \dots, x_j$$).
-
-We focus on $$dp[i]$$, the $$\text{LIS}$$ of a shorter sequence. If $$x_j > x_i$$, we can add $$x_j$$ to $$dp[i]$$ and the sequence will increase by one $$dp[j] = dp[i] + 1$$. But if $$x_j \leq x_i$$, we cannot add $$x_j$$ to $$dp[i]$$ so we just have $$dp[j] = dp[i] + 0$$. Both of these cases can be succinctly represented by the term $$\mathbb{1}[x_j > x_i]$$.
+In this case $$j > 0$$, meaning we have one or more elements in our sequence $$x_1, \dots, x_j$$. So let's use $$dp[i]$$, the $$\text{LIS}$$ of a shorter sequence, to compute $$dp[j]$$. If $$x_j > x_i$$, we can add $$x_j$$ to $$dp[i]$$ and the sequence will increase by one $$dp[j] = dp[i] + 1$$. But if $$x_j \leq x_i$$, we cannot add $$x_j$$ to $$dp[i]$$ so we just have $$dp[j] = dp[i] + 0$$. Both of these cases can be succinctly represented by the term $$\mathbb{1}[x_j > x_i]$$.
 
 ### Reformat the Recurrence Relation
 
@@ -139,7 +137,7 @@ w[i, j]
     \end{cases}
 $$
 
-Notice that $$w[i, j]$$ equals negative one when $$x_i$$ can be added to a subsequence which ends in $$x_j$$ , thus increasing the length of a strictly increasing subsequence by $$1$$. Since $$\text{LIS}$$ is a maximization problem and $$\text{LWS}$$ is a minimization problem, the weights are $$-1$$, not $$1$$, and the solution is given by $$−T[n]$$.
+Notice that $$w[i, j]$$ equals negative one when $$x_i$$ can be added to a subsequence which ends in $$x_j$$ , thus increasing the length of a strictly increasing subsequence by $$1$$. Since $$\text{LIS}$$ is a maximization problem and $$\text{LWS}$$ is a minimization problem, the weights are $$-1$$, not $$1$$, and the solution is given by $$−dp[n]$$ instead of $$dp[n]$$. We'll keep the $$\text{LIS}$$ recurrence relation in this modified format and come back to it later.
 
 ## Coin Change Problem
 
@@ -149,7 +147,7 @@ Next, let's find the recurrence relation for the [coin change](https://leetcode.
 
 > Given an integer array of $$m$$ coins $$C = [c_1, \dots, c_m]$$ where $$c_i$$ is a coin worth $$c_i$$ cents, return the fewest number of coins needed to make $$n$$ cents. (Assume you have an infinite number of each kind of coin.)
 
-If we have coins $$[1, 2, 5]$$ and want to make a total of $$n=11$$ cents, we would return $$3$$ because $$3$$ coins -- $$5, 5, 1$$ -- is the smallest number of coins needed to make $$11$$ cents.
+If we have coins $$[1, 2, 5]$$ and want to make a total of $$n=11$$ cents, we would return $$3$$ because using two $$5$$-cent coins and one $$1$$-cent coin makes $$11$$ cents with the fewest number of coins.
 
 ### Recurrence Relation
 
@@ -175,11 +173,11 @@ dp[j]
     \end{cases}
 $$
 
-where $$dp[j]$$ is the minimum number of coins needed to make $$j$$ cents. The solution to the $$\text{CC}$$ problem is given by $$dp[n]$$. If $$dp[n] == \infty$$, then it is not possible to make $$n$$ cents using the coins in array $$C$$. Now, let's break down the three cases:
+where $$dp[j]$$ is the minimum number of coins needed to make $$j$$ cents. The solution to the $$\text{CC}$$ problem is given by $$dp[n]$$. If $$dp[n] == \infty$$, then it is not possible to make $$n$$ cents using the coins in array $$C$$. Again, this equation may look a bit dense so let's break down the three cases:
 
 **Base case $$j == 0$$:**
 
-The minimum number of coins to make $$j = 0$$ cents is $$0$$ because you need $$0$$ coins to make $$0$$ cents.
+The minimum number of coins to make $$j = 0$$ cents is $$0$$ because you need $$0$$ coins to make $$0$$ cents. Pretty simple.
 
 **Base case $$j < 0$$:**
 
@@ -187,7 +185,7 @@ The minimum number of coins needed to make a negative number of cents, i.e. $$j 
 
 **Otherwise:**
 
-Here, we want to find $$dp[j]$$, the minimum number of coins needed to make $$j$$ cents. So imagine we select a coin worth $$c_i$$ cents. Then we need to know the minimum number of coins needed to make the remaining $$j-c_i$$ cents, i.e. we need to know $$dp[j-c_i]$$. We add the $$+1$$ because by using the coin $$c_i$$, we've increased the number of coins we've used by one.
+In this case we have need to make $$j$$ cents with our coins. So imagine we select a coin worth $$c_i$$ cents. Then we still need to find the minimum number of coins to make the remaining $$j-c_i$$ cents, i.e. we need to know $$dp[j-c_i]$$. We add the $$+1$$ because by using the coin $$c_i$$, we've increased the number of coins we've used by one.
 
 ### Reformat the Recurrence Relation
 
