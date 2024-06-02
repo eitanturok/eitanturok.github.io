@@ -246,9 +246,11 @@ $$
 
 and where solution to $$\text{CC}$$ is given by $$dp[n]$$.
 
+Instead of having $$dp[j-c_i]$$ and $$\min_{1 \leq i \leq m}$$ our new recurrence relation has $$dp[i]$$ and $$\min_{0 \leq i < j}$$. 
+
 The condition $$j-i \in C$$ means we add a one if there a coin worth $$j-i$$ cents in our array of coins $$C$$ because we can only go from having $$j$$ cents to having $$i$$ cents if a coin worth $$j-i$$ cents exist. If no coin worth $$j - i$$ cents exists, we cannot go from $$j$$ cents to $$i$$ cents and thus assign an $$\infty$$ value to avoid this kind of case.
 
-> In the original recurrence relation, we had a table of size $$n$$ and to compute each value, looped over all the $$m$$ coins, giving us a run time of $$O(nm)$$. In this recurrence relation, we have a table of size $$n$$ and loop over all values less than $$j$$, giving us a worst case run time of $$O(n^2)$$. Does this not change the time complexity from $$O(nm)$$ to $$O(n^2)$$? Does this make things worse? Do we always assume $$m << n$$?
+We'll keep the $$\text{CC}$$ recurrence relation in this modified format and come back to it later.
 
 ## Airplane Refueling Problem
 
@@ -256,12 +258,11 @@ The condition $$j-i \in C$$ means we add a one if there a coin worth $$j-i$$ cen
 
 Lastly, let's find the recurrence relation for the [airplane refueling](https://leetcode.com/problems/minimum-number-of-refueling-stops/description/) ($$\text{AR}$$) problem:
 
-> Suppose an airplane is flying from source $$x_0$$ to destination $$x_n$$. Given a list of optional refueling stations at positions $$X = [x_1, \dots, x_n]$$, return the minimum cost way to fly from $$x_0$$ to $$x_n$$ where it costs $$([x_j - x_i] - l)^2$$ to fly from airport $$x_i$$ to airport $$x_j$$ where $$l$$ is the optimal distance traveled for fuel efficiency reasons.
->
->
-> More specifically:
-> * Let $$0 = x_0 < x_1 < \dots < x_{n-1} < x_n$$ so that the source is at position $$0$$ and the airports are sorted by their distance from the source.
-> * Assume the airports are located along a straight line such that distance between airport $$x_j$$ and airport $$x_i$$ is $$x_i - x_j$$.
+> Suppose an airplane is flying from source $$x_0$$ to destination $$x_n$$. Given a list of optional refueling stations at positions $$X = [x_1, \dots, x_n]$$, return the minimum cost way to fly from $$x_0$$ to $$x_n$$. It costs $$([x_j - x_i] - l)^2$$ to fly from airport $$x_i$$ to airport $$x_j$$ where $$l$$ is the optimal distance for the plane to travel for fuel efficiency reasons.
+
+Let's make two assumptions:
+* Let $$0 = x_0 < x_1 < \dots < x_{n-1} < x_n$$ so that the source is at position $$0$$ and the airports are sorted by their distance from the source.
+* The airports are located along a straight line such that distance between airport $$x_j$$ and airport $$x_i$$ is $$x_i - x_j$$.
 
 If the optional refueling airports are located at positions $$X=[1, 5, 7, 10]$$ and we prefer to travel $$l=3$$ miles at a time, the minimum cost of traveling from the source $$x_0 = 0$$ to $$x_4 = 10$$ is ?.
 
