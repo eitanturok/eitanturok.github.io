@@ -36,7 +36,7 @@ Informally, our main result is:
 
 > For $$k\text{D}\hspace{1mm}\text{LWS}$$ DP problems, we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $$O(1)$$ but impossible when it is $$2^{O(\log^* n)}$$ or greater (assuming $$\text{SETH}$$).
 
-This post introduces $$\text{LWS}$$, the one dimensional version of $$k\text{D}\hspace{1mm}\text{LWS}$$ problem. The next posts discuss the $$k\text{D}\hspace{1mm}\text{LWS}$$ DP problem, how we proved our results, and the problems that we can now solve faster.
+This post introduces $$\text{LWS}$$, the one dimensional version of the $$k\text{D}\hspace{1mm}\text{LWS}$$ problem. The next posts discuss the $$k\text{D}\hspace{1mm}\text{LWS}$$ problem, how we proved our results, and the problems that we can now solve faster.
 
 Let's dive in.
 
@@ -54,7 +54,7 @@ To begin, let's find the recurrence relation for the [longest increasing subsequ
 
 > Given an integer array $$X = [x_1, \dots, x_n]$$, return the length of the longest strictly increasing subsequence in this array.
 
-If our array is $$X = [10,9,2,5,3,7,101,18]$$ our $$\text{LIS}$$ is $$[2,3,7,101]$$ because this is the longest possible subsequence of integers from $$X$$ where each element is greater than the next, i.e. where the subsequence is strictly increasing. We return $$4$$ here because that is the length of our $$\text{LIS}$$ $$[2,3,7,101]$$.
+If our array is $$X = [10,9,2,5,3,7,101,18]$$ our $$\text{LIS}$$ is $$[2,3,7,101]$$ because this is the longest possible subsequence of integers where each element is greater than the next, i.e. where the subsequence is strictly increasing. We return $$4$$ here because that is the length of our $$\text{LIS}$$ $$[2,3,7,101]$$.
 
 ### Recurrence Relation
 
@@ -79,11 +79,11 @@ where $$dp[j]$$ is the $$\text{LIS}$$ of $$x_1, \dots, x_j$$ and $$\mathbb{1}[x_
 
 **Base Case $$j == 0$$:**
 
-Since $$dp[j]$$ is defined as the $$\text{LIS}$$ of $$x_1, \dots, x_j$$, $$dp[0]$$ must be the $$\text{LIS}$$ of $$x_1, \dots, x_0$$. This sequence is undefined so we set the length of this $$\text{LIS}$$ to zero.
+Since $$dp[j]$$ is defined as the $$\text{LIS}$$ of $$x_1, \dots, x_j$$, $$dp[0]$$ must be the $$\text{LIS}$$ of $$x_1, \dots, x_0$$. This sequence is undefined because $$x_1$$ comes before $$x_0$$ so we set the length of this $$\text{LIS}$$ to zero.
 
 **Otherwise:**
 
-In this case $$j > 0$$, meaning we have one or more elements in our sequence $$x_1, \dots, x_j$$. So let's use $$dp[i]$$, the $$\text{LIS}$$ of a shorter sequence, to compute $$dp[j]$$. If $$x_j > x_i$$, we can add $$x_j$$ to $$dp[i]$$ and the sequence will increase by one $$dp[j] = dp[i] + 1$$. But if $$x_j \leq x_i$$, we cannot add $$x_j$$ to $$dp[i]$$ so we just have $$dp[j] = dp[i] + 0$$. Both of these cases can be succinctly represented by the term $$\mathbb{1}[x_j > x_i]$$.
+In this case $$j > 0$$, meaning we have one or more elements in our sequence $$x_1, \dots, x_j$$. So let's assume we have already computed $$dp[i]$$, the $$\text{LIS}$$ of a shorter sequence $$x_1, \dots, x_i$$ where $$i < j$$, and use this to help us compute $$dp[j]$$. If $$x_j > x_i$$, we can add $$x_j$$ to the $$\text{LIS}$$ of $$dp[i]$$ and the sequence will increase by one, i.e. $$dp[j] = dp[i] + 1$$. But if $$x_j \leq x_i$$, we cannot add $$x_j$$ to $$dp[i]$$ so we just have $$dp[j] = dp[i] + 0$$. Both of these cases can be succinctly represented by the term $$\mathbb{1}[x_j > x_i]$$.
 
 ### Reformat the Recurrence Relation
 
@@ -137,7 +137,7 @@ w[i, j]
     \end{cases}
 $$
 
-Notice that $$w[i, j]$$ equals negative one when $$x_i$$ can be added to a subsequence which ends in $$x_j$$ , thus increasing the length of a strictly increasing subsequence by $$1$$. Since $$\text{LIS}$$ is a maximization problem and $$\text{LWS}$$ is a minimization problem, the weights are $$-1$$, not $$1$$, and the solution is given by $$−dp[n]$$ instead of $$dp[n]$$. We'll keep the $$\text{LIS}$$ recurrence relation in this modified format and come back to it later.
+Notice that $$w[i, j]$$ equals negative one when $$x_j$$ can be added to a subsequence which ends in $$x_i$$, thus increasing the length of the $$\text{LWS}$$ by $$1$$. Since $$\text{LIS}$$ is a maximization problem and $$\text{LWS}$$ is a minimization problem, the weights are $$-1$$, not $$1$$, and the solution is given by $$−dp[n]$$ instead of $$dp[n]$$. We'll keep the $$\text{LIS}$$ recurrence relation in this modified format and come back to it later.
 
 ## Coin Change Problem
 
