@@ -50,11 +50,11 @@ $$k\text{D}\hspace{1mm}\text{LWS}$$ is a class of DP problems with a certain kin
 
 ### Definition
 
-To begin, let's find the recurrence relation for the [longest increasing subsequence](https://leetcode.com/problems/longest-increasing-subsequence/description/) ($$\text{LIS}$$) problem:
+To begin, let's find the recurrence relation for the [longest increasing subsequence](https://en.wikipedia.org/wiki/Longest_increasing_subsequence) ($$\text{LIS}$$) problem:
 
 > Given an integer array $$X = [x_1, \dots, x_n]$$, return the length of the longest strictly increasing subsequence in this array.
 
-If our array is $$X = [10,9,2,5,3,7,101,18]$$ our $$\text{LIS}$$ is $$[2,3,7,101]$$ because this is the longest possible subsequence of integers where each element is greater than the next, i.e. where the subsequence is strictly increasing. We return $$4$$ here because that is the length of our $$\text{LIS}$$ $$[2,3,7,101]$$.
+If our array is $$X = [10,9,2,5,3,7,101,18]$$ our $$\text{LIS}$$ is $$[2,3,7,101]$$ because this is the longest possible subsequence of integers where each element is greater than the next, i.e. where the subsequence is strictly increasing. We return $$4$$ here because that is the length of our $$\text{LIS}$$ $$[2,3,7,101]$$. The $$\text{LIS}$$ problem is quite famous, having numerous research papers written about it and having been attempted on [LeetCode](https://leetcode.com/problems/longest-increasing-subsequence/description/) over 3 million times!
 
 ### Recurrence Relation
 
@@ -143,11 +143,11 @@ Notice that $$w[i, j]$$ equals negative one when $$x_j$$ can be added to a subse
 
 ### Definition
 
-Next, let's find the recurrence relation for the [coin change](https://leetcode.com/problems/coin-change/description/) ($$\text{CC}$$) problem:
+Next, let's find the recurrence relation for the [coin change](https://en.wikipedia.org/wiki/Change-making_problem) ($$\text{CC}$$) problem:
 
 > Given an integer array of $$m$$ coins $$C = [c_1, \dots, c_m]$$ where $$c_i$$ is a coin worth $$c_i$$ cents, return the fewest number of coins needed to make $$n$$ cents. (Assume you have an infinite number of each kind of coin.)
 
-If we have coins $$[1, 2, 5]$$ and want to make a total of $$n=11$$ cents, we would return $$3$$ because using two $$5$$-cent coins and one $$1$$-cent coin makes $$11$$ cents with the fewest number of coins.
+If we have coins $$[1, 2, 5]$$ and want to make a total of $$n=11$$ cents, we would return $$3$$ because using two $$5$$-cent coins and one $$1$$-cent coin makes $$11$$ cents with the fewest number of coins. The $$\text{CC}$$ problem is also quite famous, having been studied in tons of research papers and having been attempted on [LeetCode](https://leetcode.com/problems/coin-change/description/) over 4 million times!
 
 ### Recurrence Relation
 
