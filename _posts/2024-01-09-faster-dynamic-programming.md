@@ -1,8 +1,8 @@
 ---
 layout: distill
-title: Can You Solve Dynamic Programming Problems Faster?
+title: Can You Solve Dynamic Programming Problems Faster? Part 1, One-Dimensional LWS
 date: 2024-01-09 11:59:00-0400
-description: We prove you can solve dynamic programming problems polynomially faster if you have a simple cost function.
+description: We prove you can solve dynamic programming problems polynomially faster if you have a simple cost function for kD LWS problems.
 tags: comments
 categories: explain-paper dynamic-programming cs-theory algorithms complexity
 giscus_comments: true
@@ -36,7 +36,7 @@ Informally, our main result is:
 
 > For $$k\text{D}\hspace{1mm}\text{LWS}$$ DP problems, we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $$O(1)$$ but impossible when it is $$2^{O(\log^* n)}$$ or greater (assuming $$\text{SETH}$$).
 
-This post explains what the $$k\text{D}\hspace{1mm}\text{LWS}$$ DP problem is, how we proved these results, and the problems that we can now solve faster.
+This post introduces $$\text{LWS}$$, the one dimensional version of $$k\text{D}\hspace{1mm}\text{LWS}$$ problem. The next posts discuss the $$k\text{D}\hspace{1mm}\text{LWS}$$ DP problem, how we proved our results, and the problems that we can now solve faster.
 
 Let's dive in.
 
