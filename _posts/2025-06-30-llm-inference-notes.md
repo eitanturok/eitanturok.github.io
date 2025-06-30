@@ -16,14 +16,17 @@ With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, att
 
 ## Easy
 
-1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision. Given an input with sequence length `L=64` and `B=4`, how many FLOPs does it take to compute attention `A(X) = softmax(Q K^T / \sqrt(d)) V`?
+1. **How many FLOPs does it take to perform `A @ b` where `A.shape = (m, k)` and `b.shape = (k, 1)`? What about `A @ B` where `A.shape = (m, k)` and `B.shape = (k, n)`? Where does the 2 come from?**
+
+1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision. Given an input with sequence length `L=64` and `B=4`, how many FLOPs does it take to compute attention `A(X) = softmax(Q K^T / \sqrt(d)) V`?**
+
+1. **You have the same model as before but now it has a KV cache. How many FLOPs do you save by using the KV cache?**
 
 2. **Will using a KV cache help you if you are memory bound or compute bound?**
 
-3. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128` and uses bfloat16 precision. How much storage does a KV cache require for a single token? What about if we have `B*L` tokens where `B` is the batch size and `L` is the sequence length?**
+4. **Why do we store only the key and value in the KV cache and not the query or the softmax output?**
 
-3. **How many FLOPs will a KV cache save you? Calculate KV cache FLOPS savings: batch_size=B, context_length=L, generate next_n tokens. What's the speedup?**
-    *Without cache: 6×B×(L+next_n)×d_model² total FLOPS. With cache: 6×B×L×d_model² (initial) + 2×B×next_n×d_model² (generation). Speedup = 3×(L+next_n)/(3×L+next_n). For L>>next_n, approaches 3× speedup.*
+3. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128` and uses bfloat16 precision. How much storage does a KV cache require for a single token? What about if we have `B*L` tokens where `B` is the batch size and `L` is the sequence length?**
 
 ## Medium
 
