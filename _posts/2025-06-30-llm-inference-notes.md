@@ -2,7 +2,7 @@
 layout: distill
 title: 30 Interview Questions on LLM Inference
 date: 2025-06-30 11:59:00
-description: How many FLOPs do you save with a kv-cache? When does the kv-cache hurt?
+description: How many FLOPs is attention? When does a KV cache hurt performance? Why does beam search cause your KV cache memory to explode?
 tags: comments
 categories: interview llm inference kv-cache
 giscus_comments: true
@@ -12,7 +12,7 @@ bibliography: 2018-12-22-distill.bib
 
 # Interview Questions
 
-With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, attention, and the kv-cache. Because this material is not taught in my university courses, I hope these questions can be helpful. My notes on these topics can be found at the bottom.
+With Claude's help, I wrote ~30 interview questions on LLM Inference, focusing on the systems side of things like FLOPs, attention, and the kv-cache. This material is not often taught in universities because it is cutting edge but the knowledge is needed to land internships at good AI labs and to do AI-systems research. My notes on these topics can be found at the bottom of this page.
 
 ## Easy
 
