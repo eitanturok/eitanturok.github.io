@@ -10,16 +10,16 @@ related_posts: true
 bibliography: 2018-12-22-distill.bib
 ---
 
-With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, attention, and the kv-cache. My notes on these topics can be found at the bottom.
-
 # Interview Questions
+
+With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, attention, and the kv-cache. Because this material is not taught in my university courses, I hope these questions can be helpful. My notes on these topics can be found at the bottom.
 
 ## Memory Architecture & Scaling
 
-1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision. At what sequence length does KV cache exceed 1GB bytes for batch_size=1?**
+1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision and a KV cache. At what sequence length does KV cache exceed 1GB bytes for batch_size=1?**
    The kv cache has shape `(2, B, L, n_layers, n_heads, d_head)` which takes up `M=n_bytes*2*B*L*n_layers*n_heads*d_head` bytes. Here `n_bytes = 16 bits/8 = 2` bytes and `M=1GB=1e+9` bytes. Therefore, 1e+9 = 2x1×L×2×32×32×128 = 524,288×L ≈ 5e+6 L bytes. L ≈ 1e+9/5e+6 ≈ 2,000 tokens. After 2,000 tokens, the kv cache will exceed 1GB. This is why long conversations quickly exhaust GPU memory.
 
-2. **Your GPU has 24GB of memory and like before, your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision. How many users can perform inference simultaneously with 500-token sequences vs 2000-token sequences?**
+2. **Your GPU has 24GB of memory and like before, your model has `n_layers=32`, `n_heads=32`, `d_head=128` and uses bfloat16 precision and a KV cache. How many users can perform inference simultaneously with 500-token sequences vs 2000-token sequences?**
 
    The kv cache has shape `(2, B, L, n_layers, n_heads, d_head)` which takes up `M=n_bytes*2*B*L*n_layers*n_heads*d_head` bytes. Notice `24GB = 2.4e+10`.
 
@@ -27,7 +27,7 @@ With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, att
 
     `L=2000`: `2.4e+10 = 2 x 2 x B x 2000 x 32 x 32 x 128`. `B = 24GB/(524KB x 2000) ≈ 22`. At most you can have `B=22` different users asking this chatbot questions simultaneously.
 
-3. **A model has n_layers, n_heads, d_head, and uses n_bytes precision. When generating ALL L tokens sequentially (tokens 1, 2, 3, ..., L) with batch size B, what is the total cumulative memory read from the KV cache and what is the total cumulative memory written to the KV cache?**
+3. **A model has n_layers, n_heads, d_head, and uses n_bytes precision and a KV cache. When generating ALL L tokens sequentially (tokens 1, 2, 3, ..., L) with batch size B, what is the total cumulative memory read from the KV cache and what is the total cumulative memory written to the KV cache?**
     When generating the `l`-th token (`1≤l≤L`), the KV cache stores the `l-1` previous keys and values, has shape `(2, B, l-1, n_layers, n_heads, d_head)`, and takes up `M(l) = n_bytes × 2 × B × (l-1) × n_layers × n_heads × d_head` bytes.
 
     **Memory Read:**
@@ -47,11 +47,11 @@ With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, att
     ```
 
 4. **Which grows more quickly: cumulative memory reads from or cumulative memory writes to the KV cache? If we have a sequence of `L=1000` tokens, how many more/fewer times do we cumulatively read than cumulatively write? What are the implications of this?**
-   From the previous question we know that the cumulative reads from the KV cache is `R(L) = n_bytes × 2 × B × n_layers × n_heads × d_head × L×(L-1)/2` and the cumulative writes to the KV cache is `W(L) = L × n_bytes × 2 × B × n_layers × n_heads × d_head`. Notice that memory reads grows quadratically with `L` but memory writes grow linearly with `L`. The read-write ratio is `R/W = (L-1)/2` meaning we read `(L-1)/2` times more data than we write.
+   From the previous question we know that the cumulative reads from the KV cache is `R(L) = n_bytes × 2 × B × n_layers × n_heads × d_head × L×(L-1)/2` and the cumulative writes to the KV cache is `W(L) = L × n_bytes × 2 × B × n_layers × n_heads × d_head`. Notice that memory reads grows quadratically with `L` but memory writes grow linearly with `L`. So the cumulative reads grow faster than the cumulative writes.
 
-   For `L=1000` tokens, we read `(1000-1)/2~500` times more data than we write.
+   The read-write ratio is `R/W = (L-1)/2` meaning we read `(L-1)/2` times more data than we write. For `L=1000` tokens, we read `(1000-1)/2~500` times more data than we write.
 
-   Implications: As sequences get longer, memory reads dominate and become the bottleneck. This is why long sequences shift from being compute-bound (where KV cache helps) to memory-bound (where the quadratic read overhead can hurt performance). However, the memory-bound is from reading from memory not from writing to memory.
+   Implications: If our model becomes memory-bound, this is likely from reading from memory not from writing to memory.
 
 5. **A model spends 60% of time on memory reads during generation. What does this tell you about compute vs memory bandwidth?**
    Memory bandwidth is the bottleneck, not compute. GPU compute units are idle 60% of the time waiting for data. We know it's bandwidth (not a slow computation) because reading cached data should be fast - if it takes 60% of time, the memory system can't supply data fast enough for the compute units.
