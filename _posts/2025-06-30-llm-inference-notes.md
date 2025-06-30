@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: 30 Interview Questions on LLM Inference
-date: 2025-06-30 11:59:00-0400
+date: 2025-06-30 11:59:00
 description: How many FLOPs do you save with a kv-cache? When does the kv-cache hurt?
 tags: comments
 categories: interview llm inference kv-cache
