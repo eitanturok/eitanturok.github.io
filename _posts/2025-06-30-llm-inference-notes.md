@@ -16,29 +16,45 @@ With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, att
 
 ## Memory Architecture & Scaling
 
-1. **A sequence grows from 100→1000 tokens. How does cumulative memory bandwidth scale vs. final memory storage?**
-   *Final storage scales 10× linearly (1000 vs 100 tokens). Cumulative read bandwidth scales ~50× quadratically because total reads = sum of 1+2+...+999 vs 1+2+...+99. This explains why long sequences become memory bandwidth bound.*
+1. **Model: 32 layers, 32 heads, d_head=128 in bfloat16. At what sequence length does KV cache exceed 1GB bytes for batch_size=1?**
+   The kv cache has shape `(2, B, L, n_layers, n_heads, d_head)` which takes up `M=n_bytes*2*B*L*n_layers*n_heads*d_head` bytes. Here `n_bytes = 16 bits/8 = 2` bytes and `M=1Gb=1e+9` bytes. Therefore, 1e+9 = 2x1×L×2×32×32×128 = 524,288×L ≈ 5e+6 L bytes. L ≈ 1e+9/5e+6 ≈ 2,000 tokens. After 2,000 tokens, the kv cache will exceed 1GB. This is why long conversations quickly exhaust GPU memory.
 
-2. **Why does the memory I/O formula have L×(L-1)/2 instead of just L²?**
-   *At token t, we read (t-1) previous tokens from cache. Total reads across all tokens = 0+1+2+...+(L-1) = L×(L-1)/2. This arithmetic series explains why reads grow quadratically while storage grows linearly.*
+2. **A model has n_layers, n_heads, d_head, and uses n_bytes precision. When generating ALL L tokens sequentially (tokens 1, 2, 3, ..., L) with batch size B, what is the total cumulative memory read from the KV cache and what is the total cumulative memory written to the KV cache?**
+    When generating the `l`-th token (`1≤l≤L`), the KV cache stores the `l-1` previous keys and values, has shape `(2, B, l-1, n_layers, n_heads, d_head)`, and takes up `M(l) = n_bytes × 2 × B × (l-1) × n_layers × n_heads × d_head` bytes.
 
-3. **Model: 32 layers, 32 heads, d_head=128, n_bytes=2. At what sequence length does KV cache exceed 1GB for batch_size=1?**
-   *Memory = 2×2×32×32×128×1×L = 524,288×L bytes. L = 1GB/524KB ≈ 2,000 tokens. This is why long conversations quickly exhaust GPU memory.*
+    **Memory Read:**
+    When generating the `l`-th token, we must read the entire KV cache containing all `l-1` previous tokens, requiring `M(l)` bytes. The cumulative memory read across ALL L tokens is:
+    ```
+    ∑(l=1 to L) M(l) = n_bytes × 2 × B × n_layers × n_heads × d_head × ∑(l=1 to L) (l-1)
+                  = n_bytes × 2 × B × n_layers × n_heads × d_head × L×(L-1)/2
+    ```
+    (Here, we used the identity that `\sum_{i=0}^n i = (i+1)*i/2` where `i=l-1`.)
+
+    **Memory Write:**
+    When generating the `l`-th token, we write only the new key-value pair for that token: `n_bytes × 2 × B × n_layers × n_heads × d_head` bytes (constant per token). The cumulative memory written across ALL `L` tokens is:
+    ```
+    ∑(l=1 to L) (n_bytes × 2 × B × n_layers × n_heads × d_head) = L × (n_bytes × 2 × B × n_layers × n_heads × d_head)
+    ```
+
+    Notice that memory reads grows quadratically with `L` but memory writes grow linearly with L. This is why long sequences become memory-bound.
+
+3. **A sequence grows from 100→1000 tokens. How does cumulative memory bandwidth scale vs. final memory storage?**
+   Final storage scales 10× linearly (1000 vs 100 tokens). Cumulative read bandwidth scales ~50× quadratically because total reads = sum of 1+2+...+999 vs 1+2+...+99. This explains why long sequences become memory bandwidth bound.
 
 4. **You have 24GB GPU memory. Compare max batch sizes: 500-token sequences vs 2000-token sequences (same model as above).**
-   *500 tokens: 24GB/(524KB×500) ≈ 92 sequences. 2000 tokens: 24GB/(524KB×2000) ≈ 23 sequences. Longer sequences drastically reduce concurrent user capacity.*
+   500 tokens: 24GB/(524KB×500) ≈ 92 sequences. 2000 tokens: 24GB/(524KB×2000) ≈ 23 sequences. Longer sequences drastically reduce concurrent user capacity.
 
 5. **A model spends 60% of time on memory reads during generation. What does this tell you about compute vs memory bandwidth?**
-   *Memory bandwidth is the bottleneck, not compute. GPU compute units are idle 60% of the time waiting for data. We know it's bandwidth (not a slow computation) because reading cached data should be fast - if it takes 60% of time, the memory system can't supply data fast enough for the compute units.*
+   Memory bandwidth is the bottleneck, not compute. GPU compute units are idle 60% of the time waiting for data. We know it's bandwidth (not a slow computation) because reading cached data should be fast - if it takes 60% of time, the memory system can't supply data fast enough for the compute units.
 
 6. **Beam search with 8 beams vs greedy with batch_size=8. One uses 10× more memory than expected. Which and why?**
-   *Beam search, if beam splitting causes cache copying. When beams diverge from same parent, each needs a full copy of the parent's KV cache history, multiplying memory usage beyond the expected 8× baseline.*
+   Beam search, if beam splitting causes cache copying. When beams diverge from same parent, each needs a full copy of the parent's KV cache history, multiplying memory usage beyond the expected 8× baseline.
 
 7. **KV cache grows quadratically in practice but formula shows linear. What real-world factor causes this?**
-   *Beam search beam splitting, conversation branching with multiple completions, or poor memory management where cache entries aren't properly shared/deduplicated. Implementation details matter enormously.*
+   Beam search beam splitting, conversation branching with multiple completions, or poor memory management where cache entries aren't properly shared/deduplicated. Implementation details matter enormously.
 
 8. **Memory-bandwidth calculation: Reading 1GB KV cache in 1ms requires what bandwidth?**
-   *1GB/1ms = 1TB/s. This is at the limit of current GPU memory bandwidth (~1-2TB/s), showing why long sequences become bandwidth bound rather than compute bound.*
+   1GB/1ms = 1TB/s. This is at the limit of current GPU memory bandwidth (~1-2TB/s), showing why long sequences become bandwidth bound rather than compute bound.
 
 ### System Design & Trade-offs
 
