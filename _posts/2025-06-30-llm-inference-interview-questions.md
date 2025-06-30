@@ -24,7 +24,29 @@ My notes on these topics can be found at the bottom of this page.
 
 1. **How many FLOPs does it take to perform `A @ b` where `A.shape = (m, k)` and `b.shape = (k, 1)`? What about `A @ B` where `A.shape = (m, k)` and `B.shape = (k, n)`? Where does the 2 come from?**
 
-1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision. Given an input with sequence length `L=64` and `B=4`, how many FLOPs does it take to compute attention `A(X) = softmax(Q K^T / \sqrt(d)) V`?**
+`A @ b` takes `2 x m x k` FLOPs:
+* Each entry in the resultant vector costs `k + (k-1)` because it is a dot product rows which requires `k` multiplications and `k-1` additions.
+* We have `m` entries in the resultant vector so we have a total of `m x (k + (k-1)) ≈ 2 x m x k` FLOPs.
+
+`A @ B` takes `2 x m x k x n` FLOPS:
+* Each entry in the resultant matrix costs `k + (k-1)` because it is a dot product which requires `k` multiplications and `k-1` additions.
+* We have `m x n` entries in the resultant matrix so we have a total of `m x n x (k + (k-1)) ≈ 2 x m x n x k` FLOPs.
+
+The `2` comes from the fact that we must perform first a *multiplication* and then an *addition* for each element in the matrix multiplication.
+
+1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision and does *NOT* have a KV cache. Given sequence length `L=64` and `B=4`, how many FLOPs does it take to compute single-headed attention `A(X) = softmax(Q K^T / \sqrt(d)) V` where input `X.shape = (B, L, d_model)`, `W_Q.shape = W_k.shape = W_v.shape = (d_model, d_model)`, and `Q = X W_q`, `K = X W_k`, `V = X W_v`.**
+
+Let's break down the FLOPs in each equation:
+`Q = X W_q` has shape `(B, L, d_model)` and costs `2 x B × L × d_model^2` FLOPs
+`K = X W_k` has shape `(B, L, d_model)` and costs `2 x B x L x d_model^2` FLOPs
+`V = X W_v` has shape `(B, L, d_model)` and costs `2 x B x L x d_model^2` FLOPs
+`R = Q K^T` has shape `(B, L, L)` and costs `2 x B x L^2 x d_model` FLOPs
+`scores = softmax(R / \sqrt(d))` has shape `(B, L, L)` and costs `c x B x L^2` FLOPs where `c` is a constant because we only apply elementwise ops here
+`A = scores @ V` has shape `(B, L, d_model)` and costs `2 x B x L^2 x d_model` FLOPs
+
+In total, single-head attention requires
+` 3 x (2 x B × L × d_model^2) + 2 x (2 x B x L^2 x d_model) + c x B x L^2 = O(B x L x d_model^2 + B x L^2 x d_model)`
+FLOPs.
 
 1. **You have the same model as before but now it has a KV cache. How many FLOPs do you save by using the KV cache?**
 
