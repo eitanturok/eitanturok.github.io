@@ -10,9 +10,15 @@ related_posts: true
 bibliography: 2018-12-22-distill.bib
 ---
 
-# Interview Questions
+# Intro
 
-With Claude's help, I wrote ~30 interview questions on LLM Inference, focusing on the systems side of things like FLOPs, attention, and the kv-cache. This material is not often taught in universities because it is cutting edge but the knowledge is needed to land internships at good AI labs and to do AI-systems research. My notes on these topics can be found at the bottom of this page.
+With Claude's help, I wrote ~30 interview questions on LLM Inference, focusing on the systems side of things like FLOPs, attention, and the kv-cache.
+
+This material is not often taught in universities because it is somewhat cutting edge. But you need to know this stuff to land internships at good AI labs and also, more importantly, to really understand how your GPU works and build fast AI systems.
+
+My notes on these topics can be found at the bottom of this page.
+
+# Interview Questions
 
 ## Easy
 
