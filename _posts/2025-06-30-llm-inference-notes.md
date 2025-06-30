@@ -14,9 +14,21 @@ bibliography: 2018-12-22-distill.bib
 
 With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, attention, and the kv-cache. Because this material is not taught in my university courses, I hope these questions can be helpful. My notes on these topics can be found at the bottom.
 
-## Memory Architecture & Scaling
+## Easy
+
+1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision. Given an input with sequence length `L=64` and `B=4`, how many FLOPs does it take to compute attention `A(X) = softmax(Q K^T / \sqrt(d)) V`?
+
+2. **Will using a KV cache help you if you are memory bound or compute bound?**
+
+3. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128` and uses bfloat16 precision. How much storage does a KV cache require for a single token? What about if we have `B*L` tokens where `B` is the batch size and `L` is the sequence length?**
+
+3. **How many FLOPs will a KV cache save you? Calculate KV cache FLOPS savings: batch_size=B, context_length=L, generate next_n tokens. What's the speedup?**
+    *Without cache: 6×B×(L+next_n)×d_model² total FLOPS. With cache: 6×B×L×d_model² (initial) + 2×B×next_n×d_model² (generation). Speedup = 3×(L+next_n)/(3×L+next_n). For L>>next_n, approaches 3× speedup.*
+
+## Medium
 
 1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision and a KV cache. At what sequence length does KV cache exceed 1GB bytes for batch_size=1?**
+
    The kv cache has shape `(2, B, L, n_layers, n_heads, d_head)` which takes up `M=n_bytes*2*B*L*n_layers*n_heads*d_head` bytes. Here `n_bytes = 16 bits/8 = 2` bytes and `M=1GB=1e+9` bytes. Therefore, 1e+9 = 2x1×L×2×32×32×128 = 524,288×L ≈ 5e+6 L bytes. L ≈ 1e+9/5e+6 ≈ 2,000 tokens. After 2,000 tokens, the kv cache will exceed 1GB. This is why long conversations quickly exhaust GPU memory.
 
 2. **Your GPU has 24GB of memory and like before, your model has `n_layers=32`, `n_heads=32`, `d_head=128` and uses bfloat16 precision and a KV cache. How many users can perform inference simultaneously with 500-token sequences vs 2000-token sequences?**
@@ -27,7 +39,15 @@ With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, att
 
     `L=2000`: `2.4e+10 = 2 x 2 x B x 2000 x 32 x 32 x 128`. `B = 24GB/(524KB x 2000) ≈ 22`. At most you can have `B=22` different users asking this chatbot questions simultaneously.
 
+
+5. **A model spends 60% of time on memory reads during generation. What does this tell you about compute vs memory bandwidth?**
+
+   Memory bandwidth is the bottleneck, not compute. GPU compute units are idle 60% of the time waiting for data. We know it's bandwidth (not a slow computation) because reading cached data should be fast - if it takes 60% of time, the memory system can't supply data fast enough for the compute units.
+
+## Hard
+
 3. **A model has n_layers, n_heads, d_head, and uses n_bytes precision and a KV cache. When generating ALL L tokens sequentially (tokens 1, 2, 3, ..., L) with batch size B, what is the total cumulative memory read from the KV cache and what is the total cumulative memory written to the KV cache?**
+
     When generating the `l`-th token (`1≤l≤L`), the KV cache stores the `l-1` previous keys and values, has shape `(2, B, l-1, n_layers, n_heads, d_head)`, and takes up `M(l) = n_bytes × 2 × B × (l-1) × n_layers × n_heads × d_head` bytes.
 
     **Memory Read:**
@@ -47,31 +67,22 @@ With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, att
     ```
 
 4. **Which grows more quickly: cumulative memory reads from or cumulative memory writes to the KV cache? If we have a sequence of `L=1000` tokens, how many more/fewer times do we cumulatively read than cumulatively write? What are the implications of this?**
+
    From the previous question we know that the cumulative reads from the KV cache is `R(L) = n_bytes × 2 × B × n_layers × n_heads × d_head × L×(L-1)/2` and the cumulative writes to the KV cache is `W(L) = L × n_bytes × 2 × B × n_layers × n_heads × d_head`. Notice that memory reads grows quadratically with `L` but memory writes grow linearly with `L`. So the cumulative reads grow faster than the cumulative writes.
 
    The read-write ratio is `R/W = (L-1)/2` meaning we read `(L-1)/2` times more data than we write. For `L=1000` tokens, we read `(1000-1)/2~500` times more data than we write.
 
    Implications: If our model becomes memory-bound, this is likely from reading from memory not from writing to memory.
 
-5. **A model spends 60% of time on memory reads during generation. What does this tell you about compute vs memory bandwidth?**
-   Memory bandwidth is the bottleneck, not compute. GPU compute units are idle 60% of the time waiting for data. We know it's bandwidth (not a slow computation) because reading cached data should be fast - if it takes 60% of time, the memory system can't supply data fast enough for the compute units.
 
-6. **Beam search with 8 beams vs greedy with batch_size=8. One uses 10× more memory than expected. Which and why?**
-   Beam search, if beam splitting causes cache copying. When beams diverge from same parent, each needs a full copy of the parent's KV cache history, multiplying memory usage beyond the expected 8× baseline.
-
-7. **KV cache grows quadratically in practice but formula shows linear. What real-world factor causes this?**
-   Beam search beam splitting, conversation branching with multiple completions, or poor memory management where cache entries aren't properly shared/deduplicated. Implementation details matter enormously.
-
-8. **Memory-bandwidth calculation: Reading 1GB KV cache in 1ms requires what bandwidth?**
-   1GB/1ms = 1TB/s. This is at the limit of current GPU memory bandwidth (~1-2TB/s), showing why long sequences become bandwidth bound rather than compute bound.
+16. **How do you handle KV cache across multiple GPUs? Explain how each parallelism strategy works with the KV-cache: model parallelisim, data parallelsim, sequence apralellim, pipeline paralellsim?**
+    *Model parallelism: partition cache by layers across GPUs, but attention requires all-gather communication. Sequence parallelism is challenging due to autoregressive dependencies. Pipeline parallelism works but complicates cache management.*
 
 ### System Design & Trade-offs
 
 9. **You're serving a chatbot. User conversations average 50 tokens but 1% go to 10,000 tokens. How do you handle KV cache memory?**
-   *Implement sliding window attention (keep only last N tokens) or progressive offloading (move old cache entries to CPU/disk). The 1% tail drives 99% of memory costs, so optimize for the outliers.*
 
-10. **A model uses Grouped Query Attention: 40 query heads, 8 KV heads. Memory savings vs standard attention?**
-    *Standard: n_heads=40 in formula. GQA: n_kv_heads=8. Memory reduction = (40-8)/40 = 80% savings. Query heads share the same 8 sets of keys/values, dramatically reducing cache size.*
+   Implement sliding window attention (keep only last N tokens) or progressive offloading (move old cache entries to CPU/disk). The 1% tail drives 99% of memory costs, so optimize for the outliers.
 
 11. **Production system: 95th percentile latency matters more than throughput. KV cache or large batches?**
     *KV cache for consistent low latency per user, even if total throughput (users/sec) is lower. Large batches increase individual request latency due to queuing effects.*
@@ -88,8 +99,6 @@ With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, att
 15. **Why might a model perform WORSE with KV cache enabled in some scenarios?**
     *Memory pressure causing GPU memory swapping to CPU, memory bandwidth saturation slowing all operations, or cache management overhead (copying, allocation) exceeding computational savings for short sequences.*
 
-16. **Distributed inference: How do you handle KV cache across multiple GPUs?**
-    *Model parallelism: partition cache by layers across GPUs, but attention requires all-gather communication. Sequence parallelism is challenging due to autoregressive dependencies. Pipeline parallelism works but complicates cache management.*
 
 ### Advanced
 
@@ -120,20 +129,17 @@ With Claude's help, I wrote ~30 interview questions on LLM Inference: FLOPs, att
 26. **We store K,V per head in KV cache. Do we also need to store the concatenated output after multi-head attention?**
     *No, only store individual K,V per head. The concatenated output gets recomputed each time because it depends on the new query. KV cache only stores the reusable components (keys and values), not query-dependent results.*
 
-27. **When we say "sequence length grows linearly," do we mean input length or total length including generated tokens?**
+27. **When we say the KV cache memory "grows linearly with sequence length," do we mean input prompt length or total length including generated tokens?**
     *Total length including all generated tokens. During autoregressive generation, sequence length = original_prompt + tokens_generated_so_far. Each new token increases this total length by 1.*
 
 27. **Batch processing sequences of different lengths with padding: do shorter sequences waste KV cache memory?**
     *In naive implementations, yes - all sequences get padded to max_length, wasting memory. Better implementations use attention masks to ignore padding during computation and variable-length caching to avoid storing padding positions in the KV cache.*
 
-29. **Grouped Query Attention (GQA): multiple heads share K,V. How does this change the storage formula?**
-    *Formula becomes: 2 × n_bytes × n_layers × n_kv_heads × d_head (where n_kv_heads < n_heads). If 32 query heads share 8 KV heads, you get 4× memory savings while maintaining most of the attention quality.*
+29. **What is Grouped Query Attention (GQA): multiple heads share K,V. How does this change the storage formula for a model using a KV cache?**
+    GQA is multiple heads share K,V. Formula becomes: 2 × n_bytes × n_layers × n_kv_heads × d_head (where n_kv_heads < n_heads). If 32 query heads share 8 KV heads, you get 4× memory savings while maintaining most of the attention quality.
 
 30. **Beam search: each beam needs its own KV cache. How does this explode memory?**
     *Memory scales as k_beams × sequence_length × cache_size. With 8 beams and 1000 tokens, you need 8× more memory than greedy decoding. When beams split from same parent, cache copying creates temporary memory spikes beyond this 8× baseline.*
-
-31. **Calculate KV cache FLOPS savings: batch_size=B, context_length=L, generate next_n tokens. What's the speedup?**
-    *Without cache: 6×B×(L+next_n)×d_model² total FLOPS. With cache: 6×B×L×d_model² (initial) + 2×B×next_n×d_model² (generation). Speedup = 3×(L+next_n)/(3×L+next_n). For L>>next_n, approaches 3× speedup.*
 
 32. **What memory and time overheads does KV cache add?**
     *Memory: 2×n_bytes×n_layers×n_heads×d_head×B×L storage overhead. Time: memory allocation/deallocation, cache management, and quadratic read bandwidth growth (reading more cached data for each new token). These can outweigh benefits for short sequences.*
