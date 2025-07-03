@@ -24,35 +24,35 @@ My notes on these topics can be found at the bottom of this page.
 
 1. **How many FLOPs does it take to perform `A @ b` where `A.shape = (m, k)` and `b.shape = (k, 1)`? What about `A @ B` where `A.shape = (m, k)` and `B.shape = (k, n)`? Where does the 2 come from?**
 
-    `A @ b` takes `2 x m x k` FLOPs:
-    * Each entry in the resultant vector costs `k + (k-1)` because it is a dot product rows which requires `k` multiplications and `k-1` additions.
-    * We have `m` entries in the resultant vector so we have a total of `m x (k + (k-1)) ≈ 2 x m x k` FLOPs.
+`A @ b` takes `2 x m x k` FLOPs:
+* Each entry in the resultant vector costs `k + (k-1)` because it is a dot product rows which requires `k` multiplications and `k-1` additions.
+* We have `m` entries in the resultant vector so we have a total of `m x (k + (k-1)) ≈ 2 x m x k` FLOPs.
 
-    `A @ B` takes `2 x m x k x n` FLOPS:
-    * Each entry in the resultant matrix costs `k + (k-1)` because it is a dot product which requires `k` multiplications and `k-1` additions.
-    * We have `m x n` entries in the resultant matrix so we have a total of `m x n x (k + (k-1)) ≈ 2 x m x n x k` FLOPs.
+`A @ B` takes `2 x m x k x n` FLOPS:
+* Each entry in the resultant matrix costs `k + (k-1)` because it is a dot product which requires `k` multiplications and `k-1` additions.
+* We have `m x n` entries in the resultant matrix so we have a total of `m x n x (k + (k-1)) ≈ 2 x m x n x k` FLOPs.
 
-    The `2` comes from the fact that we must perform a *multiplication* and an *addition* for each element.
+The `2` comes from the fact that we must perform a *multiplication* and an *addition* for each element.
 
 4. **What is a KV cache? Why do we store only the key and value in the KV cache and not the query or the softmax output?**
 
 2. **Will using a KV cache help you if you are memory bound or compute bound?**
 
-1. **Given `B=4` sequences all of length `L=64`, how many FLOPs does it take to perform a single forward-pass of single-headed attention with `d_model=128`? Assume the model does *NOT* have a KV cache and that computing the softmax on a matrix with shape `(m, n, n)` costs `O(mn^2) = c x m x n^2` where `c` is a constant that we'll set to `c=1`.**
+1. **Given `B=4` sequences all of length `L=64`, how many FLOPs does it take to perform a single forward-pass of single-headed attention with `d_model=128` and `n_layers=9`? Assume the model does *NOT* have a KV cache and that computing the softmax on a matrix with shape `(m, n, n)` costs `O(mn^2) = c x m x n^2` where `c` is a constant that we'll set to `c=1`.**
 
-    Given input `X.shape = (B, L, d_model)`, weights `W_Q.shape = W_k.shape = W_v.shape = (d_model, d_model)`, the forward pass of single-headed attention is given by `A(X) = softmax(Q K^T / \sqrt(d_model)) V` where `Q = X W_q`, `K = X W_k`, `V = X W_v`.
+Given input `X.shape = (B, L, d_model)`, weights `W_Q.shape = W_k.shape = W_v.shape = (d_model, d_model)`, the forward pass of single-headed attention in a single layer is given by `A(X) = softmax(Q K^T / \sqrt(d_model)) V` where `Q = X W_q`, `K = X W_k`, `V = X W_v`.
 
-    Let's break down the FLOPs from each operation:
-    `Q = X W_q` has shapes `(B, L, d_model) @ (d_model, d_model) -> (B, L, d_model)` and costs `2 x B × L × d_model^2` FLOPs
-    `K = X W_k` has shapes `(B, L, d_model) @ (d_model, d_model) -> (B, L, d_model)` and costs `2 x B × L × d_model^2` FLOPs
-    `V = X W_v` has shapes `(B, L, d_model) @ (d_model, d_model) -> (B, L, d_model)` and costs `2 x B × L × d_model^2` FLOPs
-    `R = Q K^T` has shapes `(B, L, d_model) @  (B, d_model, L) -> (B, L, L)` and costs `2 x B x L^2 x d_model` FLOPs
-    `scores = softmax(R / \sqrt(d_model))` has shapes `(B, L, L) -> (B, L, L)` and costs `(c+1) x B x L^2` FLOPs
-    `A = scores @ V` has shapes `(B, L, L) @ (B, L, d_model) -> (B, L, d_model)` and costs `2 x B x L^2 x d_model` FLOPs
+Let's break down the FLOPs from each operation:
+* `Q = X W_q` has shapes `(B, L, d_model) @ (d_model, d_model) -> (B, L, d_model)` and costs `2 x B × L × d_model^2` FLOPs
+* `K = X W_k` has shapes `(B, L, d_model) @ (d_model, d_model) -> (B, L, d_model)` and costs `2 x B × L × d_model^2` FLOPs
+* `V = X W_v` has shapes `(B, L, d_model) @ (d_model, d_model) -> (B, L, d_model)` and costs `2 x B × L × d_model^2` FLOPs
+* `R = Q K^T` has shapes `(B, L, d_model) @  (B, d_model, L) -> (B, L, L)` and costs `2 x B x L^2 x d_model` FLOPs
+* `scores = softmax(R / \sqrt(d_model))` has shapes `(B, L, L) -> (B, L, L)` and costs `(c+1) x B x L^2` FLOPs
+* `A = scores @ V` has shapes `(B, L, L) @ (B, L, d_model) -> (B, L, d_model)` and costs `2 x B x L^2 x d_model` FLOPs
 
-    In total, single-head attention requires `3 x (2 x B × L × d_model^2) + 2 x (2 x B x L^2 x d_model) + (c+1) x B x L^2` FLOPs.
+So the forward pass of *one* layer of single-headed attention requires `3 x (2 x B × L × d_model^2) + 2 x (2 x B x L^2 x d_model) + (c+1) x B x L^2` FLOPs. Across all `n_layers`, it costs `n_layers x [ 3 x (2 x B × L × d_model^2) + 2 x (2 x B x L^2 x d_model) + (c+1) x B x L^2 ]` FLOPs.
 
-    Plugging in our values, we get `3 x (2 x 4 x 64 x 128^2) + 2 x (2 x 4 x 64^2 x 128) + (1+1) x 4 x 64^2 = 33,587,200` FLOPs.
+Plugging in our values, we get `9 x [ 3 x (2 x 4 x 64 x 128^2) + 2 x (2 x 4 x 64^2 x 128) + (1+1) x 4 x 64^2 ]= 302,284,800 ≈ 3e+8` FLOPs.
 
 1. **You have the same model as before but now it has a KV cache. How many FLOPs do you save by using the KV cache?**
 
@@ -62,49 +62,49 @@ My notes on these topics can be found at the bottom of this page.
 
 1. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128`, and uses bfloat16 precision and a KV cache. At what sequence length does KV cache exceed 1GB bytes for batch_size=1?**
 
-   The kv cache has shape `(2, B, L, n_layers, n_heads, d_head)` which takes up `M=n_bytes*2*B*L*n_layers*n_heads*d_head` bytes. Here `n_bytes = 16 bits/8 = 2` bytes and `M=1GB=1e+9` bytes. Therefore, 1e+9 = 2x1×L×2×32×32×128 = 524,288×L ≈ 5e+6 L bytes. L ≈ 1e+9/5e+6 ≈ 2,000 tokens. After 2,000 tokens, the kv cache will exceed 1GB. This is why long conversations quickly exhaust GPU memory.
+The kv cache has shape `(2, B, L, n_layers, n_heads, d_head)` which takes up `M=n_bytes*2*B*L*n_layers*n_heads*d_head` bytes. Here `n_bytes = 16 bits/8 = 2` bytes and `M=1GB=1e+9` bytes. Therefore, 1e+9 = 2x1×L×2×32×32×128 = 524,288×L ≈ 5e+6 L bytes. L ≈ 1e+9/5e+6 ≈ 2,000 tokens. After 2,000 tokens, the kv cache will exceed 1GB. This is why long conversations quickly exhaust GPU memory.
 
 2. **Your GPU has 24GB of memory and like before, your model has `n_layers=32`, `n_heads=32`, `d_head=128` and uses bfloat16 precision and a KV cache. How many users can perform inference simultaneously with 500-token sequences vs 2000-token sequences?**
 
-   The kv cache has shape `(2, B, L, n_layers, n_heads, d_head)` which takes up `M=n_bytes*2*B*L*n_layers*n_heads*d_head` bytes. Notice `24GB = 2.4e+10`.
+The kv cache has shape `(2, B, L, n_layers, n_heads, d_head)` which takes up `M=n_bytes*2*B*L*n_layers*n_heads*d_head` bytes. Notice `24GB = 2.4e+10`.
 
-   `L=500`: `2.4e+10 = 2 x 2 x B x 500 x 32 x 32 x 128`. `B = 24GB/(524KB x 500) ≈ 91`. At most you can have `B=91` different users asking this chatbot questions simultaneously.
+`L=500`: `2.4e+10 = 2 x 2 x B x 500 x 32 x 32 x 128`. `B = 24GB/(524KB x 500) ≈ 91`. At most you can have `B=91` different users asking this chatbot questions simultaneously.
 
-    `L=2000`: `2.4e+10 = 2 x 2 x B x 2000 x 32 x 32 x 128`. `B = 24GB/(524KB x 2000) ≈ 22`. At most you can have `B=22` different users asking this chatbot questions simultaneously.
+`L=2000`: `2.4e+10 = 2 x 2 x B x 2000 x 32 x 32 x 128`. `B = 24GB/(524KB x 2000) ≈ 22`. At most you can have `B=22` different users asking this chatbot questions simultaneously.
 
 5. **A model spends 60% of time on memory reads during generation. What does this tell you about compute vs memory bandwidth?**
 
-   Memory bandwidth is the bottleneck, not compute. GPU compute units are idle 60% of the time waiting for data. We know it's bandwidth (not a slow computation) because reading cached data should be fast - if it takes 60% of time, the memory system can't supply data fast enough for the compute units.
+Memory bandwidth is the bottleneck, not compute. GPU compute units are idle 60% of the time waiting for data. We know it's bandwidth (not a slow computation) because reading cached data should be fast - if it takes 60% of time, the memory system can't supply data fast enough for the compute units.
 
 ## Hard
 
 3. **A model has n_layers, n_heads, d_head, and uses n_bytes precision and a KV cache. When generating ALL L tokens sequentially (tokens 1, 2, 3, ..., L) with batch size B, what is the total cumulative memory read from the KV cache and what is the total cumulative memory written to the KV cache?**
 
-    When generating the `l`-th token (`1≤l≤L`), the KV cache stores the `l-1` previous keys and values, has shape `(2, B, l-1, n_layers, n_heads, d_head)`, and takes up `M(l) = n_bytes × 2 × B × (l-1) × n_layers × n_heads × d_head` bytes.
+When generating the `l`-th token (`1≤l≤L`), the KV cache stores the `l-1` previous keys and values, has shape `(2, B, l-1, n_layers, n_heads, d_head)`, and takes up `M(l) = n_bytes × 2 × B × (l-1) × n_layers × n_heads × d_head` bytes.
 
-    **Memory Read:**
-    When generating the `l`-th token, we must read the entire KV cache containing all `l-1` previous tokens, requiring `M(l)` bytes. The cumulative memory read across ALL L tokens is:
-    ```
-    R(L) = ∑(l=1 to L) M(l)
-        = n_bytes × 2 × B × n_layers × n_heads × d_head × ∑(l=1 to L) (l-1)
-        = n_bytes × 2 × B × n_layers × n_heads × d_head × L×(L-1)/2
-    ```
-    (Here, we used the identity that `\sum_{i=0}^n i = (i+1)*i/2` where `i=l-1`.)
+**Memory Read:**
+When generating the `l`-th token, we must read the entire KV cache containing all `l-1` previous tokens, requiring `M(l)` bytes. The cumulative memory read across ALL L tokens is:
+```
+R(L) = ∑(l=1 to L) M(l)
+    = n_bytes × 2 × B × n_layers × n_heads × d_head × ∑(l=1 to L) (l-1)
+    = n_bytes × 2 × B × n_layers × n_heads × d_head × L×(L-1)/2
+```
+(Here, we used the identity that `\sum_{i=0}^n i = (i+1)*i/2` where `i=l-1`.)
 
-    **Memory Write:**
-    When generating the `l`-th token, we write only the new key-value pair for that token: `n_bytes × 2 × B × n_layers × n_heads × d_head` bytes (constant per token). The cumulative memory written across ALL `L` tokens is:
-    ```
-    W(L) = ∑(l=1 to L) (n_bytes × 2 × B × n_layers × n_heads × d_head)
-         = L × (n_bytes × 2 × B × n_layers × n_heads × d_head)
-    ```
+**Memory Write:**
+When generating the `l`-th token, we write only the new key-value pair for that token: `n_bytes × 2 × B × n_layers × n_heads × d_head` bytes (constant per token). The cumulative memory written across ALL `L` tokens is:
+```
+W(L) = ∑(l=1 to L) (n_bytes × 2 × B × n_layers × n_heads × d_head)
+        = L × (n_bytes × 2 × B × n_layers × n_heads × d_head)
+```
 
 4. **Which grows more quickly: cumulative memory reads from or cumulative memory writes to the KV cache? If we have a sequence of `L=1000` tokens, how many more/fewer times do we cumulatively read than cumulatively write? What are the implications of this?**
 
-   From the previous question we know that the cumulative reads from the KV cache is `R(L) = n_bytes × 2 × B × n_layers × n_heads × d_head × L×(L-1)/2` and the cumulative writes to the KV cache is `W(L) = L × n_bytes × 2 × B × n_layers × n_heads × d_head`. Notice that memory reads grows quadratically with `L` but memory writes grow linearly with `L`. So the cumulative reads grow faster than the cumulative writes.
+From the previous question we know that the cumulative reads from the KV cache is `R(L) = n_bytes × 2 × B × n_layers × n_heads × d_head × L×(L-1)/2` and the cumulative writes to the KV cache is `W(L) = L × n_bytes × 2 × B × n_layers × n_heads × d_head`. Notice that memory reads grows quadratically with `L` but memory writes grow linearly with `L`. So the cumulative reads grow faster than the cumulative writes.
 
-   The read-write ratio is `R/W = (L-1)/2` meaning we read `(L-1)/2` times more data than we write. For `L=1000` tokens, we read `(1000-1)/2~500` times more data than we write.
+The read-write ratio is `R/W = (L-1)/2` meaning we read `(L-1)/2` times more data than we write. For `L=1000` tokens, we read `(1000-1)/2~500` times more data than we write.
 
-   Implications: If our model becomes memory-bound, this is likely from reading from memory not from writing to memory.
+Implications: If our model becomes memory-bound, this is likely from reading from memory not from writing to memory.
 
 
 16. **How do you handle KV cache across multiple GPUs? Explain how each parallelism strategy works with the KV-cache: model parallelisim, data parallelsim, sequence apralellim, pipeline paralellsim?**
