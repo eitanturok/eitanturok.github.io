@@ -131,7 +131,7 @@ $$
 \approx
 \frac{2BFD}{2DF}
 =
-2B
+B
 \end{align*}
 $$
 
@@ -139,7 +139,6 @@ We are compute bound when
 $$\begin{align*}
 \text{Intensity}(\text{Arithmetic}) \geq \text{Intensity}(\text{Accelerator})
 \\
-2B \geq 298
-\\
-B \geq 149
+B \geq 298
 \end{align*}$$
+Therefore $B_\text{crit} = 298$.
