@@ -23,4 +23,6 @@ My research interests are in **efficient deep learning**, **representation learn
 
 I spent a year as an **AI research scientist** at [MosaicML x Databricks](https://www.mosaicml.com/) where I trained SOTA OS LLMs on thousands of GPUs.
 
-Before that, I completed my **B.S. in CS, Applied Math** at [Columbia University](https://www.columbia.edu/) and did theoretical computer science research. I worked on fine-grained complexity with [Josh Alman](https://joshalman.com/), differential privacy with [Rachel Cummings](https://rachelcummings.com/), and non-Euclidean ML with [Professor Itsik Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe Chlenski](http://chlenski.com/).
+Before that, I did my B.S. at [Columbia University](https://www.columbia.edu/) in **CS, Applied Math**.
+
+At Columbia, I did lots of theoretical computer science research: I worked on fine-grained complexity with [Josh Alman](https://joshalman.com/), differential privacy with [Rachel Cummings](https://rachelcummings.com/), and non-Euclidean ML with [Professor Itsik Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe Chlenski](http://chlenski.com/).
