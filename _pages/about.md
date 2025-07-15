@@ -25,4 +25,4 @@ I spent a year as an **AI research scientist** at [MosaicML x Databricks](https:
 
 Before that, I did my B.S. at [Columbia University](https://www.columbia.edu/) in **CS, Applied Math**.
 
-At Columbia, I did lots of theoretical computer science research: I worked on fine-grained complexity with [Josh Alman](https://joshalman.com/), differential privacy with [Rachel Cummings](https://rachelcummings.com/), and non-Euclidean ML with [Professor Itsik Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe Chlenski](http://chlenski.com/).
+At Columbia, I did lots of **theoretical computer science** research: I worked on fine-grained complexity with [Josh Alman](https://joshalman.com/), differential privacy with [Rachel Cummings](https://rachelcummings.com/), and non-Euclidean ML with [Professor Itsik Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe Chlenski](http://chlenski.com/).
