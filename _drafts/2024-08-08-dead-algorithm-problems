@@ -1,0 +1,72 @@
+---
+layout: distill
+title: Can You Solve Dynamic Programming Problems Faster? Part 1, One-Dimensional LWS
+date: 2024-01-09 11:59:00-0400
+description: We prove you can solve dynamic programming problems polynomially faster if you have a simple cost function for kD LWS problems.
+tags: comments
+categories: explain-paper dynamic-programming cs-theory algorithms complexity
+giscus_comments: true
+related_posts: true
+bibliography: 2018-12-22-distill.bib
+toc:
+    - name: Introduction
+---
+
+After 70 years, someone came up with a new way to solve the edit distance
+problem 50x faster. And no one is paying attention.
+
+The edit distance problems asks you to find the minimum number of character insertions,
+deletions, or subsititions needed to change one string into another.
+
+The edit distance problem is a classic, first discovered in 1870 and taught in every algorithms class
+in the country. The problem is solved with dynamic programming in $O(n^2)$ time where $n$ is the
+length of the longest string. From aligning genetic sequences to powering
+Github's merge algorithm, the edit distance algorithm is used millions of
+times everyday without you even realizing it. Yet on inputs where $n$ is in the billions (such as the human
+genome), quadratic runtime is prohibitive.
+
+The holy grail has been to find a $O(n)$ time algorithm for the edit distance
+problem, achieving a $O(n)$ speed-up over the straightforward $O(n^2)$ time
+solution. Despite the best efforts, researchers have only been able to shave off
+a $\log^2 n$ factor.
+
+Yet CS theory has pronounced the edit distance problem "dead" in 2015. Arturs Backurs
+and Piotr Indyk, researchers from MIT, proved that there can never be a subquadratic time algorithm for the edit
+distance problem (assuming SETH).
+
+This bothers me. A theoretical computer scientist said this cannot be done and
+people have since stopped looking. 
+
+Yet the edit distance problem is not dead.
+
+The edit distance problem lives outside of theory. And I want to talk about two
+practical, fast edit distance methods that everyone is sleeping on.
+
+Yet, ever 
+
+
+Yet since I've been in college, CS theory has pronounced the edit distance problem dead. In 2017?, NAME proved
+that the edit distance can not be solved in linear time. 
+
+Man, I was bummed. 
+
+The edit distance
+
+# Introduction
+The edit distance is one of my favorite problems. It is a classical algorithms
+problem, first discussed in 197?. But amid all of the AI hype are there any more
+innovations in this problem? After 50? years is this classical algorithms
+problem dead?
+
+I want to talk about a couple of crazy interesting innovations in the edit
+distance problem seen for the past couple of years.
+
+
+Arxiv:
+2014 - 2023
+number of papers each year with edit distance in the title
+7, 9, 13, 7, 14, 17, 20, 15, 23, 26
+
+GScholar:
+2014 - 2023
+3900, 3940, 4220, 4110, 4520, 4820, 4810, 5170, 5240, 5100
