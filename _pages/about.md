@@ -19,8 +19,8 @@ social: true  # includes social icons at the bottom of the page
 
 Hi 👋! I'm a Masters student at the Weizmann Institute of Science.
 
-My research interests are in **efficient deep learning**, **representation learning**, and **making GPUs go brrr**. I used to do research in CS theory on fine-grained complexity and differential privacy.
+My research interests are in **efficient deep learning**, **representation learning**, and **making GPUs go brrr**.
 
-I was an **AI research scientist** at [MosaicML x Databricks](https://www.mosaicml.com/) where I trained SOTA OS LLMs on thousands of GPUs! I graduated from [Columbia University](https://www.columbia.edu/) in 2023 with a **B.S. in CS, Applied Math**.
+I spent a year as an **AI research scientist** at [MosaicML x Databricks](https://www.mosaicml.com/) where I trained SOTA OS LLMs on thousands of GPUs.
 
-At Columbia, I did research with [Professor Itsik Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe Chlenski](http://chlenski.com/) to develop deep learning models and random forest algorithms in hyperbolic space. I also worked with [Professor Josh Alman](https://joshalman.com/) to develop faster algorithms for dynamic programming problems.
+Before that, I completed my **B.S. in CS, Applied Math** at [Columbia University](https://www.columbia.edu/) and did theoretical computer science research. I worked on fine-grained complexity with [Josh Alman](https://joshalman.com/), differential privacy with [Rachel Cummings](https://rachelcummings.com/), and non-Euclidean ML with [Professor Itsik Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe Chlenski](http://chlenski.com/).

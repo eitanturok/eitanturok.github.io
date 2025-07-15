@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: My Solutions to "How to scale your model"
-date: 2025-06-30 11:59:00
+date: 2025-07-15 11:59:00
 description: My Solutions to "How to scale your model"
 tags: comments
 categories: interview llm inference scale
