@@ -17,18 +17,10 @@ selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hi 👋! I'm an **AI research scientist** at [MosaicML x
-Databricks](https://www.mosaicml.com/) working on training efficient LLMs with
-better data.
+Hi 👋! I'm a Masters student at the Weizmann Institute of Science.
 
-My research interests are in **efficient and geometric deep learning**,
-**representation learning**, and **making GPUs go brrr**. I used to do research in CS theory on fine-grained complexity and differential privacy.
+My research interests are in **efficient deep learning**, **representation learning**, and **making GPUs go brrr**. I used to do research in CS theory on fine-grained complexity and differential privacy.
 
-I graduated from [Columbia University](https://www.columbia.edu/) in 2023 with a
-**B.S. in Computer Science (major) and Applied Mathematics (minor)**.
+I was an **AI research scientist** at [MosaicML x Databricks](https://www.mosaicml.com/) where I trained SOTA OS LLMs on thousands of GPUs! I graduated from [Columbia University](https://www.columbia.edu/) in 2023 with a **B.S. in CS, Applied Math**.
 
-At Columbia, I did research with [Professor Itsik
-Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe
-Chlenski](http://chlenski.com/) to develop deep learning models and random
-forest algorithms in hyperbolic space. I also worked with [Professor Josh
-Alman](https://joshalman.com/) to develop faster algorithms for dynamic programming problems.
+At Columbia, I did research with [Professor Itsik Pe'er](https://www.engineering.columbia.edu/faculty/itsik-peer) and [Philippe Chlenski](http://chlenski.com/) to develop deep learning models and random forest algorithms in hyperbolic space. I also worked with [Professor Josh Alman](https://joshalman.com/) to develop faster algorithms for dynamic programming problems.
