@@ -14,6 +14,8 @@ bibliography: 2018-12-22-distill.bib
 
 I thought it would be fun to go through [How to Scale Your Model](https://jax-ml.github.io/scaling-book/), a small book on how to train and perform inference on LLMs at scale. This is not what is a forward or backward pass. This is how do you maximize MFU for an MoE on 1024 GPUs. This is the big leagues and contains a lot of knowledge that is really just kept in large industry labs or the well-connected labs of academia. There is no real textbook on this info because it is so new and "cutting edge" -- that is until now. This material is "solidly untaught," [writes](https://jacobaustin123.substack.com/p/technical-writing-with-unit-tests) Jacob, one of the authors, "I don’t believe another resource exists that tells this technical story end-to-end."
 
+![how to scale your model screenshot](how-to-scale-your-model-screenshot.png)
+
 I'm an especially big fan of [How to Scale Your Model](https://jax-ml.github.io/scaling-book/) because it has great practice problems. They are like HW problems, but they really make you think. And they are practical too.
 
 Over the next couple of weeks, I want to work through all 11 chapters of [How to Scale Your Model](https://jax-ml.github.io/scaling-book/). I'm going to record my solutions here.
