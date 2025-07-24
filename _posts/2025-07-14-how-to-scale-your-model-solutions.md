@@ -184,7 +184,7 @@ where
 We'll assume the data is in bfloat16 like before.
 
 **Case 1:**
-Step 1: All Gather. The operation $\text{AllGather}_X(Y[D_X, F]) -> Y[D, F]$ requires only communication, no FLOPs, i.e. $P_\text{step 1}=0$. Since $Y$ contains $2DF$ bytes, each of the $X$ chips holds $1/X$th of these $2DF$ bytes, $G = 2DF/X$. A single chip must therefore receive the missing $X-1$ chunks of $Y$ from the other $X-1$ chips, totaling $C_\text{write} = G \cdot (X-1) = 2DF(X-1)/X$ bytes *written* on a single device. Similarly, a single chip reads $C_\text{read} = 2DF(X-1)/X$ bytes from other GPUs. In total, we therefore communicate $C_\text{step 1} = C_\text{write} + C_\text{read} = 4DF(X-1)/X$ bytes.
+Step 1: All Gather. The operation $\text{AllGather}_X(Y[D_X, F]) -> Y[D, F]$ requires only communication, no FLOPs, i.e. $P_\text{step 1}=0$. Since $Y$ contains $2DF$ bytes, each of the $X$ chips holds $1/X$th of these $2DF$ bytes, $G = 2DF/X$. A single chip must therefore receive the missing $X-1$ chunks of $Y$ from the other $X-1$ chips, totaling $C_\text{write} = G \cdot (X-1) = 2DF(X-1)/X$ bytes *written* on a single device. Similarly, a single chip reads $C_\text{read} = 2DF(X-1)/X$ bytes from other GPUs. In total, we therefore communicate $C_\text{step 1} = C_\text{write} + C_\text{read} = 4DF \cdot (X-1)/X$ bytes. Let's assume $X>>0$ such that $(X-1)/X =1$. Then $C_\text{step 1} = 4DF$.
 
 Step 2: Fully Replicated Matrix Multiplication. The operation $X[B, D] \cdot_D Y[D, F] \to Z[B, F]$ requires both communication and FLOPS. We read $2BD$ bytes from $X$, read $2DF$ bytes from $Y$, and write $2BF$ bytes for $Z$. So in total, a single chip communicates $C_\text{step 2} = 2BD + 2DF + 2BF$ bytes. A single chip performs $P_\text{step 2} = 2BF(D + (D-1)) \approx 2BFD$ FLOPs for this matrix multiplication.
 
@@ -195,7 +195,7 @@ $$
     =
     \frac{C_\text{step 1} + C_\text{step 2}}{W_{ICI}}
     =
-    \frac{4DF(X-1)/X + 2BD + 2DF + 2BF}{W_{ICI}}
+    \frac{4DF + (2BD + 2DF + 2BF)}{W_{ICI}}
     \\
     T_{FLOPs}
     =
@@ -207,7 +207,6 @@ $$
     =
     \max\{T_{comms}, T_{FLOPs} \}
     =
-    \frac{4DF(X-1)/X + 2BD + 2DF + 2BF}{W_{ICI}}
 \end{align*}
 $$
 Here, $R$ is the number of FLOPs/sec our chip computes.
