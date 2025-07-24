@@ -69,6 +69,7 @@ $$\begin{equation} \text{Intensity}(\text{Arithmetic}) = \frac{\text{Computation
 $$\begin{equation} \text{Intensity(Accelerator)} = \frac{\text{Accelerator FLOPs/sec}}{\text{Accelerator Bytes/sec}} = \frac{1.97e14}{8/1e11} = 243 \end{equation}$$
 
 We are compute bound when
+
 $$\begin{align*}
 \text{Intensity}(\text{Arithmetic}) \geq \text{Intensity}(\text{Accelerator})
 \\
@@ -144,3 +145,70 @@ $$\begin{align*}
 B \geq 298
 \end{align*}$$
 Therefore $B_\text{crit} = 298$.
+
+
+## Chapter 3 Solutions
+
+## Question 3.2
+
+**Question 2 [AllGather latency]**: How long should $\text{AllGather}_X([B_X, D_Y])$ take on a TPUv4p 4x4x4 slice with mesh `Mesh({'X': 4, 'Y': 4, 'Z': 4})` if $B=1024$ and $D=4096$ in bfloat16? How about $$\text{AllGather}_{XY}([B_X, D_Y])$$? How about $$\text{AllReduce}_Z([B_X, D_Y] \{U_Z \})$$?
+
+
+**Answer:**
+The TPUv4p has wraparounds for `4x4x4` cubes ([source](https://jax-ml.github.io/scaling-book/tpus/#tpu-networking)), meaning we have bidirectional ICI, not unidirectional ICI, in our `4x4x4` slice. Looking at [chapter 2](https://jax-ml.github.io/scaling-book/tpus/#key-takeaways), a TPUv4p has bidirectional $W_\text{ici} = 9e10$ bytes/sec.
+
+Consider a matrix $A$ with shape $bf16[B, D]$ on the mesh `Mesh({'X': 4, 'Y': 4, 'Z': 4})` sharded according to $[B_X, D_Y]$. This means that if we fix the $Y,Z$ axes, the $B$ dimension is split onto $4$ different chips. Similarly, if we fix the $X,Z$ axes, the $D$ dimension is split onto $4$ different chips. Overall, we have $4$ replications of $A$ along the $Z$ axis because $A$ is not sharded along the $Z$ axis at all.
+
+The operation $\text{AllGather}_X([B_X, D_Y]) -> [B, D_Y]$ means every chip along the $X$ axis currently has $1/4$th of the $B$ dimension and we want every chip along the $X$ axis to have a complete copy of the $B$ dimension of $A$. Notice that dimension $D$ is still sharded along axis $Y$ and all of $A$ is still replicated along axis $Z$. How long will this take? Each chip has $V = 2(B/|X|)(D/|Y|)$ bytes because dimension $B$ is split among $X$ chips and dimension $D$ is split among $Y$ chips and `bfloat16` takes up 2 bytes.
+$$
+\begin{align*}
+    T_\text{hop}
+    &=
+    \frac{1}{\frac{# of hops}{bytes on single chip} \cdot (how fast can we send bytes)}
+    \\
+    &=
+    \frac{\text{bytes on single chip}}{\text{# of chips along the contracting dimensions}}
+    &=
+    \frac{V}(|X|/2) W_\text{ICI}}
+    &=
+    \frac{2(B/|X|)(D/|Y|)}{|X|/2) W_\text{ICI}}
+\end{align*}
+$$
+where
+
+## Question 3.4
+
+**Question 4 [matmul strategies]**: To perform $X[B, D] \cdot_D Y[D_X, F] \to Z[B, F]$, in this section we tell you to perform $\text{AllGather}_X(Y[D_X, F])$ and multiply the fully replicated matrices (Case 2, *Strategy 1*). Instead, you could multiply the local shards like $X[B, D_X] \cdot_D Y[D_X, F] \to Z[B, F] \\{U_X\\}$ (Case 4, *Strategy 2*), and then $\text{AllReduce}_X(Z[B, F] \\{ U_X\\})$. How many FLOPs and comms does each of these perform? Which is better and why?
+
+**Answer:**
+We'll assume the data is in bfloat16 like before.
+
+**Case 1:**
+Step 1: All Gather. The operation $\text{AllGather}_X(Y[D_X, F]) -> Y[D, F]$ requires only communication, no FLOPs, i.e. $P_\text{step 1}=0$. Since $Y$ contains $2DF$ bytes, each of the $X$ chips holds $1/X$th of these $2DF$ bytes, $G = 2DF/X$. A single chip must therefore receive the missing $X-1$ chunks of $Y$ from the other $X-1$ chips, totaling $C_\text{write} = G \cdot (X-1) = 2DF(X-1)/X$ bytes *written* on a single device. Similarly, a single chip reads $C_\text{read} = 2DF(X-1)/X$ bytes from other GPUs. In total, we therefore communicate $C_\text{step 1} = C_\text{write} + C_\text{read} = 4DF(X-1)/X$ bytes.
+
+Step 2: Fully Replicated Matrix Multiplication. The operation $X[B, D] \cdot_D Y[D, F] \to Z[B, F]$ requires both communication and FLOPS. We read $2BD$ bytes from $X$, read $2DF$ bytes from $Y$, and write $2BF$ bytes for $Z$. So in total, a single chip communicates $C_\text{step 2} = 2BD + 2DF + 2BF$ bytes. A single chip performs $P_\text{step 2} = 2BF(D + (D-1)) \approx 2BFD$ FLOPs for this matrix multiplication.
+
+In total, a single chip takes
+$$
+\begin{align*}
+    T_{comms}
+    =
+    \frac{C_\text{step 1} + C_\text{step 2}}{W_{ICI}}
+    =
+    \frac{4DF(X-1)/X + 2BD + 2DF + 2BF}{W_{ICI}}
+    \\
+    T_{FLOPs}
+    =
+    \frac{P_\text{step 1} + P_\text{step 2}}{R}
+    =
+    \frac{0 + 2BFD}{R}
+    \\
+    T
+    =
+    \max\{T_{comms}, T_{FLOPs} \}
+    =
+    \frac{4DF(X-1)/X + 2BD + 2DF + 2BF}{W_{ICI}}
+\end{align*}
+$$
+Here, $R$ is the number of FLOPs/sec our chip computes.
+
