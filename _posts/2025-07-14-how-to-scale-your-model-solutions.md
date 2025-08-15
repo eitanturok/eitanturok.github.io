@@ -181,7 +181,7 @@ where
 **Question 4 [matmul strategies]**: To perform $X[B, D] \cdot_D Y[D_X, F] \to Z[B, F]$, in this section we tell you to perform $\text{AllGather}_X(Y[D_X, F])$ and multiply the fully replicated matrices (Case 2, *Strategy 1*). Instead, you could multiply the local shards like $X[B, D_X] \cdot_D Y[D_X, F] \to Z[B, F] \\{U_X\\}$ (Case 4, *Strategy 2*), and then $\text{AllReduce}_X(Z[B, F] \\{ U_X\\})$. How many FLOPs and comms does each of these perform? Which is better and why?
 
 **Answer:**
-We'll assume the data is in bfloat16 like before.
+We'll assume the data is in bfloat16 like before. Also, let $R$ be the number of FLOPs/sec our chip computes.
 
 **Case 1:**
 Step 1: All Gather. The operation $\text{AllGather}_X(Y[D_X, F]) -> Y[D, F]$ requires only communication, no FLOPs, i.e. $P_\text{step 1}=0$. Since $Y$ contains $2DF$ bytes, each of the $X$ chips holds $1/X$th of these $2DF$ bytes, $G = 2DF/X$. A single chip must therefore receive the missing $X-1$ chunks of $Y$ from the other $X-1$ chips, totaling $C_\text{write} = G \cdot (X-1) = 2DF(X-1)/X$ bytes *written* on a single device. Similarly, a single chip reads $C_\text{read} = 2DF(X-1)/X$ bytes from other GPUs. In total, we therefore communicate $C_\text{step 1} = C_\text{write} + C_\text{read} = 4DF \cdot (X-1)/X$ bytes. Let's assume $X>>0$ such that $(X-1)/X =1$. Then $C_\text{step 1} = 4DF$.
@@ -209,5 +209,6 @@ $$
     =
 \end{align*}
 $$
-Here, $R$ is the number of FLOPs/sec our chip computes.
 
+**Case 2:**
+Step 1: Multiply the local shards. The operation $X[B, D_X] \cdot_D Y[D_X, F] \to Z[B, F] \\{U_X\\}$ requires both communication and FLOPs. Each chip must read $2 B (D/X)$ bytes from $X$, $2 (D/X) F$ bytes from $Y$, and write $2BF$ bytes to $Z$. In total, $C_\text{step 1} = 1/X (2BD + 2DF + 2BF)$ bytes. Each chip computes $P_\text{step 1} = BF(D/2 + (D/2 - 1)) \approx  b$
