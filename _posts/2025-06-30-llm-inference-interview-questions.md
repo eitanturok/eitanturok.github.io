@@ -34,11 +34,11 @@ My notes on these topics can be found at the bottom of this page.
 
 The `2` comes from the fact that we must perform a *multiplication* and an *addition* for each element.
 
-4. **What is a KV cache? Why do we store only the key and value in the KV cache and not the query or the softmax output?**
+2. **What is a KV cache? Why do we store only the key and value in the KV cache and not the query or the softmax output?**
 
-2. **Will using a KV cache help you if you are memory bound or compute bound?**
+3. **Will using a KV cache help you if you are memory bound or compute bound?**
 
-1. **Given `B=4` sequences all of length `L=64`, how many FLOPs does it take to perform a single forward-pass of single-headed attention with `d_model=128` and `n_layers=9`? Assume the model does *NOT* have a KV cache and that computing the softmax on a matrix with shape `(m, n, n)` costs `O(mn^2) = c x m x n^2` where `c` is a constant that we'll set to `c=1`.**
+4. **Given `B=4` sequences all of length `L=64`, how many FLOPs does it take to perform a single forward-pass of single-headed attention with `d_model=128` and `n_layers=9`? Assume the model does *NOT* have a KV cache and that computing the softmax on a matrix with shape `(m, n, n)` costs `O(mn^2) = c x m x n^2` where `c` is a constant that we'll set to `c=1`.**
 
 Given input `X.shape = (B, L, d_model)`, weights `W_Q.shape = W_k.shape = W_v.shape = (d_model, d_model)`, the forward pass of single-headed attention in a single layer is given by `A(X) = softmax(Q K^T / \sqrt(d_model)) V` where `Q = X W_q`, `K = X W_k`, `V = X W_v`.
 
@@ -54,9 +54,47 @@ So the forward pass of *one* layer of single-headed attention requires `3 x (2 x
 
 Plugging in our values, we get `9 x [ 3 x (2 x 4 x 64 x 128^2) + 2 x (2 x 4 x 64^2 x 128) + (1+1) x 4 x 64^2 ]= 302,284,800 ≈ 3e+8` FLOPs.
 
-1. **You have the same model as before but now it has a KV cache. How many FLOPs do you save by using the KV cache?**
+5. **You have the same model as before but now it has a KV cache. How many FLOPs do you save by using the KV cache?**
 
-3. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128` and uses bfloat16 precision. How much storage does a KV cache require for a single token? What about if we have `B*L` tokens where `B` is the batch size and `L` is the sequence length?**
+6. **Your model has `n_layers=32`, `n_heads=32`, `d_head=128` and uses bfloat16 precision. How much storage does a KV cache require for a single token? What about if we have `B*L` tokens where `B` is the batch size and `L` is the sequence length?**
+
+7. Let's look at the (simplified) vllm logs for running inference on `meta-llama/Llama-3.1-8B-Instruct`.
+```
+Using max model len 16384
+Casting torch.float16 to torch.bfloat16.
+Available KV cache memory: 14.68 GiB
+Maximum concurrency for 16,384 tokens per request: 7.34x
+```
+Why is maximum concurrency is 7.34 and what does this mean? (Hint: look at the model's [config.json](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/blob/main/config.json) and compute the kv cache size in terms of the batch size.)
+
+Let $D$ be the hidden dimension, $H$ be the number of attention heads, $H_{kv}$ be the number of key value heads, $D_H$ be the head dimension, $L$ be the number of layers, $B$ be the batch size, $T$ be the number of tokens in a sequence, and $p$ be the model precision. (Since Llama-3.1 uses group query attention (GQA), we need two different quantities for $H$ and $H_{kv}$. Also in GQA, the head dimension is computed using $H$, not $H_{kv}$, i.e. $D_H = D / H$.)
+
+Now, recall the KV cache takes up
+
+$$
+2 L H_{kv} D_H B T p
+$$
+
+bytes. Looking at the `meta-llama/Llama-3.1-8B-Instruct` [config.json](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/blob/main/config.json) file on HuggingFace, we see
+```
+"hidden_size": 4096
+"num_attention_heads": 32,
+"num_hidden_layers": 32,
+"num_key_value_heads": 8,
+```
+Therefore $L=32$, $H_{kv}=8$, $D_H=D/H = 4096 / 32 = 128$. The vllm logs say the model uses `bfloat16` and max model length is 16384 which means $p=2$ and $T=16384$. So the kv-cache in terms of batch size is $2 L H_{kv} D_H B T p = 2 (32) (8) (128) B (16384) (2) = 2,147,483,648 B$ bytes or $2B$ GiB. (Recall that GiB != GB; 1024 bytes = 1 kiB.)
+
+Since the logs say that the kv cache takes up $14.68$ GiB, we must have batch size $B = 14.68/2 = 7.34$. This is how we get that the maximum concurrency is 7.34! Practically speaking, this means that our GPU can perform inference for at most 7.34 users concurrently when each user's request uses the maximum sequence length of 16,384 tokens. To clarify, this tells you that the pre-allocated KV cache could handle ~7 full-length requests simultaneously, but it doesn't mean you're actually running 7 requests.
+
+8. If our GPU needs to store the model weights and the kv cache for `meta-llama/Llama-3.1-8B-Instruct`, what is the minimum number of storage our GPU needs? Use the vllm logs from the previous question.
+
+The vllm logs tells us that the kv cache for `meta-llama/Llama-3.1-8B-Instruct` takes up 14.68 GiB.
+
+Since `meta-llama/Llama-3.1-8B-Instruct` has 8B parameters, each stored in `bfloat16`, the model weights take up $8,000,000,000 * 2 = 16,000,000,000$ bytes or $14.9012$ GiB.
+
+In total, our GPU needs $14.68 + 14.9012 = 29.5812$ GiB or $29.5812$ GB.
+
+
 
 ## Medium
 
