@@ -1,17 +1,12 @@
 ---
 layout: distill
-title: Can You Solve Dynamic Programming Problems Faster? Part 1, One-Dimensional LWS
+title: A good startup idea...
 date: 2024-01-09 11:59:00-0400
-description: We prove you can solve dynamic programming problems polynomially faster if you have a simple cost function for kD LWS problems.
+description: Why I'd like to build a startup that detects LLM generated text
 tags: comments
-categories: explain-paper dynamic-programming cs-theory algorithms complexity
+categories: startup, LLM, detection
 giscus_comments: true
 related_posts: true
-bibliography: 2018-12-22-distill.bib
-toc:
-    - name: Introduction
-    - name: LWS, Dynamic Programming in One Dimension
-    - name: Solving LWS Faster
 ---
 
 A friend recently asked me: if you could start any startup right now, what would it be?
