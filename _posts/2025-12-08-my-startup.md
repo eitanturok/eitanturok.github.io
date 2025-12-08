@@ -1,5 +1,5 @@
 ---
-layout: distill
+layout: post
 title: A good startup idea...
 date: 2025-12-08 11:59:00-0400
 description: Why I'd like to build a startup that detects LLM generated text
@@ -24,6 +24,7 @@ Here's why this would be compelling:
 ![openai classifier shutdown](/assets/img/my-startup/openai-clasifier.png)
 
 It's rare to find a startup idea that checks all three boxes: important problem, hard technology, and a moat built from your competitors' misaligned incentives.
+
 I recently discovered [Pangram](https://www.pangram.com/), a startup doing exactly this.
 
 <aside>
@@ -47,4 +48,5 @@ Good news—it correctly identified this as human-written. Then I asked ChatGPT 
 The detector caught it. AI-generated, as expected.
 
 **Two examples prove nothing,** but it's a promising start. I don't know who else is tackling this problem seriously, but it's clearly worth pursuing. The technology works, the incentives are aligned, and the market needs it. Someone should build this—and it looks like someone already is.
+
 *Thanks to Yonatan for the great discussion that inspired this post.*
