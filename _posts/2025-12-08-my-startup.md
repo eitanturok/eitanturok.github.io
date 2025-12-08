@@ -25,17 +25,17 @@ It's rare to find a startup idea that checks all three boxes: important problem,
 
 I recently discovered [Pangram](https://www.pangram.com/), a startup doing exactly this.
 
-![pangram-website](assets/img/my-startup/pangram.png)
+![pangram-website](/assets/img/my-startup/pangram.png)
 
 They make a bold claim: "Third-party verified results with a near-zero false positive rate." Their [arXiv paper](https://arxiv.org/pdf/2402.14873) from July 2024 lays out the technical details.
 
 **I decided to test it.** First, I fed their detector the actual abstract from their own paper:
 
-![human abstract](assets/img/my-startup/human-abstract.png)
+![human abstract](/assets/img/my-startup/human-abstract.png)
 
 Good news—it correctly identified this as human-written. Then I asked ChatGPT to "plz write the abstract for pangram text, a deep learning model that identifies llm generated text":
 
-![ai abstract](assets/img/my-startup/ai-abstract.png)
+![ai abstract](/assets/img/my-startup/ai-abstract.png)
 
 The detector caught it. AI-generated, as expected.
 
