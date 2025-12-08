@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: A good startup idea...
-date: 2024-01-09 11:59:00-0400
+date: 2025-12-08 11:59:00-0400
 description: Why I'd like to build a startup that detects LLM generated text
 tags: comments
 categories: startup, LLM, detection
@@ -31,12 +31,14 @@ They make a bold claim: "Third-party verified results with a near-zero false pos
 
 **I decided to test it.** First, I fed their detector the actual abstract from their own paper:
 
-![](assets/img/my-startup/human-abstract.png)
+![human abstract](assets/img/my-startup/human-abstract.png)
 
 Good news—it correctly identified this as human-written. Then I asked ChatGPT to "plz write the abstract for pangram text, a deep learning model that identifies llm generated text":
 
-![](assets/img/my-startup/ai-abstract.png)
+![ai abstract](assets/img/my-startup/ai-abstract.png)
 
 The detector caught it. AI-generated, as expected.
 
 **Two examples prove nothing,** but it's a promising start. I don't know who else is tackling this problem seriously, but it's clearly worth pursuing. The technology works, the incentives are aligned, and the market needs it. Someone should build this—and it looks like someone already is.
+
+*Thanks to Yonatan for the great discussion that inspired this post.*
