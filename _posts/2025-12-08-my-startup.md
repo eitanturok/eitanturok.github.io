@@ -36,11 +36,11 @@ They make a bold claim: "Third-party verified results with a near-zero false pos
 
 **I decided to test it.** First, I fed their detector the actual abstract from their own paper:
 
-![](assets/img/my-startup/real-abstract)
+![](assets/img/my-startup/human-abstract.png)
 
 Good news—it correctly identified this as human-written. Then I asked ChatGPT to "plz write the abstract for pangram text, a deep learning model that identifies llm generated text":
 
-![](assets/img/my-startup/ai-abstract)
+![](assets/img/my-startup/ai-abstract.png)
 
 The detector caught it. AI-generated, as expected.
 
