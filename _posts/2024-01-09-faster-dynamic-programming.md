@@ -1,8 +1,8 @@
 ---
 layout: distill
-title: Can You Solve Dynamic Programming Problems Faster? Part 1, One-Dimensional LWS
+title: Can You Solve Dynamic Programming Problems Faster?
 date: 2024-01-09 11:59:00-0400
-description: We prove you can solve dynamic programming problems polynomially faster if you have a simple cost function for kD LWS problems.
+description: We prove you can solve dynamic programming problems polynomially faster if you have a simple transition cost function for kD LWS problems.
 tags: comments
 categories: explain-paper dynamic-programming cs-theory algorithms complexity
 giscus_comments: true
@@ -36,7 +36,7 @@ Informally, our main result is:
 
 > For $$k\text{D}\hspace{1mm}\text{LWS}$$ DP problems, we prove that a polynomial speedup over the standard DP algorithm is possible when the rank of the cost tensor is $$O(1)$$ but impossible when it is $$2^{O(\log^* n)}$$ or greater (assuming $$\text{SETH}$$).
 
-This post introduces $$\text{LWS}$$, the one dimensional version of the $$k\text{D}\hspace{1mm}\text{LWS}$$ problem. The next posts discuss the $$k\text{D}\hspace{1mm}\text{LWS}$$ problem, how we proved our results, and the problems that we can now solve faster.
+This post introduces $$\text{LWS}$$, the one dimensional version of the $$k\text{D}\hspace{1mm}\text{LWS}$$ problem. Then it discusses the $$k\text{D}\hspace{1mm}\text{LWS}$$ problem, how we proved our results, and the problems that we can now solve faster.
 
 Let's dive in.
 
@@ -246,7 +246,7 @@ $$
 
 and where solution to $$\text{CC}$$ is given by $$dp[n]$$.
 
-Instead of having $$dp[j-c_i]$$ and $$\min_{1 \leq i \leq m}$$ our new recurrence relation has $$dp[i]$$ and $$\min_{0 \leq i < j}$$. 
+Instead of having $$dp[j-c_i]$$ and $$\min_{1 \leq i \leq m}$$ our new recurrence relation has $$dp[i]$$ and $$\min_{0 \leq i < j}$$.
 
 The condition $$j-i \in C$$ means we add a one if there a coin worth $$j-i$$ cents in our array of coins $$C$$ because we can only go from having $$j$$ cents to having $$i$$ cents if a coin worth $$j-i$$ cents exist. If no coin worth $$j - i$$ cents exists, we cannot go from $$j$$ cents to $$i$$ cents and thus assign an $$\infty$$ value to avoid this kind of case.
 
@@ -496,7 +496,7 @@ w[i, j]
     \begin{cases}
         -1
         &
-        \text{if $$x_j > x_i$$}
+        \text{if $x_j > x_i$}
         \\
         0
         &
@@ -504,6 +504,7 @@ w[i, j]
         \\
     \end{cases}
 $$
+
 
 In English, this means we place a $$-1$$ at position $$[i, j]$$ of the cost matrix if $$x_j > x_i$$; else we place a $$0$$ there. Recall that $$w$$ is a zero-indexed matrix where $$i$$ determines one's position on the $$y\text{-axis}$$ and $$j$$ determines one's position on the $$x\text{-axis}$$. In this example,
 
